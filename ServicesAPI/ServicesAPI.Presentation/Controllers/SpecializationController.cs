@@ -19,14 +19,14 @@ namespace SpecializationsAPI.Presentation.Controllers
         }
 
         [HttpGet("{PageSize}/{PageNumber}")]
-        public async Task<IActionResult> GetSpecializationsInfo(GetSpecializationsInfo request, CancellationToken cancellationToken = default)
+        public async Task<IActionResult> GetSpecializationsInfo([FromRoute] GetSpecializationsInfo request, CancellationToken cancellationToken = default)
         {
             var services = await _mediator.Send(request, cancellationToken);
             return Ok(services);
         }
 
         [HttpGet("{id}")]
-        public async Task<IActionResult> GetById(GetSpecializationById request, CancellationToken cancellationToken = default)
+        public async Task<IActionResult> GetById([FromRoute]GetSpecializationById request, CancellationToken cancellationToken = default)
         {
             var service = await _mediator.Send(request, cancellationToken);
             return Ok(service);
@@ -46,11 +46,11 @@ namespace SpecializationsAPI.Presentation.Controllers
             return Accepted();
         }
 
-        [HttpPost("{Id}")]
+        [HttpPost]
         public async Task<IActionResult> CreateSpecialization(CreateSpecialization request, CancellationToken cancellationToken = default)
         {
             var service = await _mediator.Send(request, cancellationToken);
-            return CreatedAtAction("GetById", service.Id, service);
+            return Ok(service);
         }
     }
 }

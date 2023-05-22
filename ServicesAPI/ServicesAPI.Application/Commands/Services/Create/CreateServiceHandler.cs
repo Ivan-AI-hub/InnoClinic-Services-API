@@ -5,7 +5,7 @@ using ServicesAPI.Domain.Interfaces;
 
 namespace ServicesAPI.Application.Commands.Services.Create
 {
-    public class CreateServiceHandler : IRequestHandler<CreateService, Service>
+    internal class CreateServiceHandler : IRequestHandler<CreateService, Service>
     {
         private IServiceRepository _serviceRepository;
         private IMapper _mapper;
@@ -18,7 +18,7 @@ namespace ServicesAPI.Application.Commands.Services.Create
         public async Task<Service> Handle(CreateService request, CancellationToken cancellationToken)
         {
             var service = _mapper.Map<Service>(request);
-            await _serviceRepository.AddAsync(service, cancellationToken);
+            await _serviceRepository.CreateAsync(service, cancellationToken);
             return service;
         }
     }

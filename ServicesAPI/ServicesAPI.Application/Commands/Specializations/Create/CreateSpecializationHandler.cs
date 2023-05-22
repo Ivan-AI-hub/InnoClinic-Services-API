@@ -19,8 +19,7 @@ namespace ServicesAPI.Application.Commands.Specializations.Create
         public async Task<Specialization> Handle(CreateSpecialization request, CancellationToken cancellationToken)
         {
             var specialization = _mapper.Map<Specialization>(request);
-            specialization.Services.AddRange(request.Services);
-            await _specializationRepository.AddAsync(specialization, cancellationToken);
+            await _specializationRepository.CreateAsync(specialization, cancellationToken);
             return specialization;
         }
     }

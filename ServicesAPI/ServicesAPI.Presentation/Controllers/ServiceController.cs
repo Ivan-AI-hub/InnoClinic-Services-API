@@ -19,14 +19,14 @@ namespace ServicesAPI.Presentation.Controllers
         }
 
         [HttpGet("{ServiceCategoryName}/{PageSize}/{PageNumber}")]
-        public async Task<IActionResult> GetByCategory(GetServicesByCategory request, CancellationToken cancellationToken = default)
+        public async Task<IActionResult> GetByCategory([FromRoute] GetServicesByCategory request, CancellationToken cancellationToken = default)
         {
             var services = await _mediator.Send(request, cancellationToken);
             return Ok(services);
         }
 
         [HttpGet("{id}")]
-        public async Task<IActionResult> GetServiceInfo(GetServiceById request, CancellationToken cancellationToken = default)
+        public async Task<IActionResult> GetServiceInfo([FromRoute] GetServiceById request, CancellationToken cancellationToken = default)
         {
             var service = await _mediator.Send(request, cancellationToken);
             return Ok(service);
@@ -46,11 +46,11 @@ namespace ServicesAPI.Presentation.Controllers
             return Accepted();
         }
 
-        [HttpPost("{Id}")]
+        [HttpPost]
         public async Task<IActionResult> CreateService(CreateService request, CancellationToken cancellationToken = default)
         {
             var service = await _mediator.Send(request, cancellationToken);
-            return CreatedAtAction("GetServiceInfo", service.Id, service);
+            return Ok(service);
         }
     }
 }
