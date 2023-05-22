@@ -14,7 +14,7 @@ namespace ServicesAPI.Application.Queries.Services.GetById
         }
         public async Task<Service> Handle(GetServiceById request, CancellationToken cancellationToken)
         {
-            var service = await  _serviceRepository.GetByIdAsync(request.id, cancellationToken);
+            var service = await _serviceRepository.GetByIdAsync(request.id, cancellationToken);
             if (service == null)
             {
                 throw new ServiceNotFoundException(request.id);

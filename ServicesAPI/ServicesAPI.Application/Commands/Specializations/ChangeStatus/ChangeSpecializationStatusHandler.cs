@@ -1,5 +1,4 @@
-﻿using AutoMapper;
-using MediatR;
+﻿using MediatR;
 using ServicesAPI.Domain.Interfaces;
 
 namespace ServicesAPI.Application.Commands.Specializations.ChangeStatus

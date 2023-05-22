@@ -2,11 +2,6 @@
 using ServicesAPI.Domain;
 using ServicesAPI.Domain.Exceptions;
 using ServicesAPI.Domain.Interfaces;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace ServicesAPI.Application.Queries.Specializations.GetById
 {
@@ -20,7 +15,7 @@ namespace ServicesAPI.Application.Queries.Specializations.GetById
         public async Task<Specialization> Handle(GetSpecializationById request, CancellationToken cancellationToken)
         {
             var specialization = await _specializationRepository.GetByIdAsync(request.Id);
-            if(specialization == null)
+            if (specialization == null)
             {
                 throw new SpecializationNotFoundException(request.Id);
             }

@@ -2,7 +2,7 @@
 {
     public class SpecializationNotFoundException : NotFoundException
     {
-        public SpecializationNotFoundException(Guid id) 
+        public SpecializationNotFoundException(Guid id)
             : base($"Specialization with ID ={id} does not exist")
         {
         }
