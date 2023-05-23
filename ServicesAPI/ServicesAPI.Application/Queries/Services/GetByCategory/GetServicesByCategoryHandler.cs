@@ -6,7 +6,7 @@ namespace ServicesAPI.Application.Queries.Services.GetByCategory
 {
     public class GetServicesByCategoryHandler : IRequestHandler<GetServicesByCategory, IEnumerable<Service>>
     {
-        private IServiceRepository _serviceRepository;
+        private readonly IServiceRepository _serviceRepository;
         public GetServicesByCategoryHandler(IServiceRepository serviceRepository)
         {
             _serviceRepository = serviceRepository;

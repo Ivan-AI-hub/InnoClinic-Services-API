@@ -6,7 +6,6 @@ using ServicesAPI.Persistence;
 using ServicesAPI.Persistence.Migrations;
 using ServicesAPI.Persistence.Repositories;
 using ServicesAPI.Persistence.Settings;
-using System.Reflection;
 
 namespace ServicesAPI.Web.Extensions
 {
@@ -14,7 +13,7 @@ namespace ServicesAPI.Web.Extensions
     {
         public static void ConfigureSqlContext(this IServiceCollection services, IConfiguration configuration, string contextSettingsSectionName)
         {
-            services.Configure<ContextSettings>(configuration.GetSection(contextSettingsSectionName)); 
+            services.Configure<ContextSettings>(configuration.GetSection(contextSettingsSectionName));
             services.AddFluentMigratorCore().ConfigureRunner(c => c.AddSqlServer2016()
                 .WithGlobalConnectionString(configuration.GetSection(contextSettingsSectionName).GetSection("RegularConnectionString").Value)
                 .ScanIn(typeof(Database).Assembly).For.Migrations());

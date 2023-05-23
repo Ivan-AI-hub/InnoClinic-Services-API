@@ -6,7 +6,7 @@ namespace ServicesAPI.Persistence.Repositories
 {
     public class SpecializationRepository : ISpecializationRepository
     {
-        private ServicesContext _context;
+        private readonly ServicesContext _context;
         public SpecializationRepository(ServicesContext context)
         {
             _context = context;
@@ -30,7 +30,7 @@ namespace ServicesAPI.Persistence.Repositories
         public async Task EditAsync(Guid id, Specialization newSpecialization, CancellationToken cancellationToken = default)
         {
             var query = "UPDATE Specializations SET Name = @Name, " +
-                                "IsActive = @IsActive" +
+                                "IsActive = @IsActive " +
                                 "WHERE Id = @Id";
 
             var parameters = new DynamicParameters();
@@ -76,7 +76,7 @@ namespace ServicesAPI.Persistence.Repositories
             var query = "SELECT * FROM Specializations " +
                 "ORDER BY Specializations.Id " +
                 "OFFSET @Skip ROWS " +
-                "FETCH NEXT @Take ROWS ONLY";  
+                "FETCH NEXT @Take ROWS ONLY";
 
             var parameters = new DynamicParameters();
             parameters.Add("Skip", pageSize * (pageNumber - 1));

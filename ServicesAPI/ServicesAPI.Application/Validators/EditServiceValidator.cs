@@ -1,12 +1,13 @@
 ﻿using FluentValidation;
-using ServicesAPI.Application.Commands.Services.Create;
+using ServicesAPI.Application.Commands.Services.Edit;
 
 namespace ServicesAPI.Application.Validators
 {
-    public class CreateServiceValidator : AbstractValidator<CreateService>
+    public class EditServiceValidator : AbstractValidator<EditService>
     {
-        public CreateServiceValidator()
+        public EditServiceValidator()
         {
+            RuleFor(x => x.Id).NotNull().NotEmpty();
             RuleFor(x => x.Name).NotNull().NotEmpty();
             RuleFor(x => x.SpecializationId).NotNull().NotEmpty();
             RuleFor(x => x.CategoryName).NotNull().NotEmpty();

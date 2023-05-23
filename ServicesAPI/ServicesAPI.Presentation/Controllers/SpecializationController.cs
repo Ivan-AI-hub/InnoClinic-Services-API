@@ -6,13 +6,13 @@ using ServicesAPI.Application.Commands.Specializations.Edit;
 using ServicesAPI.Application.Queries.Specializations.GetById;
 using ServicesAPI.Application.Queries.Specializations.GetInfo;
 
-namespace SpecializationsAPI.Presentation.Controllers
+namespace ServicesAPI.Presentation.Controllers
 {
     [ApiController]
     [Route("Specializations")]
     public class SpecializationController : ControllerBase
     {
-        private IMediator _mediator;
+        private readonly IMediator _mediator;
         public SpecializationController(IMediator mediator)
         {
             _mediator = mediator;
@@ -25,24 +25,24 @@ namespace SpecializationsAPI.Presentation.Controllers
             return Ok(services);
         }
 
-        [HttpGet("{id}")]
-        public async Task<IActionResult> GetById([FromRoute]GetSpecializationById request, CancellationToken cancellationToken = default)
+        [HttpGet("{Id}")]
+        public async Task<IActionResult> GetById([FromRoute] GetSpecializationById request, CancellationToken cancellationToken = default)
         {
             var service = await _mediator.Send(request, cancellationToken);
             return Ok(service);
         }
 
-        [HttpPut("{Id}/status")]
-        public async Task<IActionResult> ChangeStatus(ChangeSpecializationStatus request, CancellationToken cancellationToken = default)
+        [HttpPut("{id}/status")]
+        public async Task<IActionResult> ChangeStatus([FromRoute] Guid id, bool isActive, CancellationToken cancellationToken = default)
         {
-            await _mediator.Send(request, cancellationToken);
+            await _mediator.Send(new ChangeSpecializationStatus(id, isActive), cancellationToken);
             return Accepted();
         }
 
-        [HttpPut("{Id}")]
-        public async Task<IActionResult> EditSpecialization(EditSpecialization request, CancellationToken cancellationToken = default)
+        [HttpPut("{id}")]
+        public async Task<IActionResult> EditSpecialization([FromRoute] Guid id, string name, bool isActive, CancellationToken cancellationToken = default)
         {
-            await _mediator.Send(request, cancellationToken);
+            await _mediator.Send(new EditSpecialization(id, name, isActive), cancellationToken);
             return Accepted();
         }
 

@@ -8,9 +8,11 @@ namespace ServicesAPI.Application.Queries.Specializations.GetById
     internal class GetSpecializationByIdHandler : IRequestHandler<GetSpecializationById, Specialization>
     {
         public ISpecializationRepository _specializationRepository;
-        public GetSpecializationByIdHandler(ISpecializationRepository specializationRepository)
+        public IServiceRepository _serviceRepository;
+        public GetSpecializationByIdHandler(ISpecializationRepository specializationRepository, IServiceRepository serviceRepository)
         {
             _specializationRepository = specializationRepository;
+            _serviceRepository = serviceRepository;
         }
         public async Task<Specialization> Handle(GetSpecializationById request, CancellationToken cancellationToken)
         {
@@ -19,7 +21,7 @@ namespace ServicesAPI.Application.Queries.Specializations.GetById
             {
                 throw new SpecializationNotFoundException(request.Id);
             }
-
+            specialization.Services.AddRange(await _serviceRepository.GetServicesBySpecializationIdAsync(request.Id));
             return specialization;
         }
     }

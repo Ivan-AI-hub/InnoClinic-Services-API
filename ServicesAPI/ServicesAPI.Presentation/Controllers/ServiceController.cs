@@ -12,7 +12,7 @@ namespace ServicesAPI.Presentation.Controllers
     [Route("services/")]
     public class ServiceController : ControllerBase
     {
-        private IMediator _mediator;
+        private readonly IMediator _mediator;
         public ServiceController(IMediator mediator)
         {
             _mediator = mediator;
@@ -25,24 +25,30 @@ namespace ServicesAPI.Presentation.Controllers
             return Ok(services);
         }
 
-        [HttpGet("{id}")]
+        [HttpGet("{Id}")]
         public async Task<IActionResult> GetServiceInfo([FromRoute] GetServiceById request, CancellationToken cancellationToken = default)
         {
             var service = await _mediator.Send(request, cancellationToken);
             return Ok(service);
         }
 
-        [HttpPut("{Id}/status")]
-        public async Task<IActionResult> ChangeStatus(ChangeServiceStatus request, CancellationToken cancellationToken = default)
+        [HttpPut("{id}/status")]
+        public async Task<IActionResult> ChangeStatus([FromRoute] Guid id, bool status, CancellationToken cancellationToken = default)
         {
-            await _mediator.Send(request, cancellationToken);
+            await _mediator.Send(new ChangeServiceStatus(id, status), cancellationToken);
             return Accepted();
         }
 
-        [HttpPut("{Id}")]
-        public async Task<IActionResult> EditService(EditService request, CancellationToken cancellationToken = default)
+        [HttpPut("{id}")]
+        public async Task<IActionResult> EditService([FromRoute] Guid id,
+                                                     string name,
+                                                     int price,
+                                                     bool status,
+                                                     Guid specializationId,
+                                                     string categoryName,
+                                                     CancellationToken cancellationToken = default)
         {
-            await _mediator.Send(request, cancellationToken);
+            await _mediator.Send(new EditService(id, name, price, status, specializationId, categoryName), cancellationToken);
             return Accepted();
         }
 

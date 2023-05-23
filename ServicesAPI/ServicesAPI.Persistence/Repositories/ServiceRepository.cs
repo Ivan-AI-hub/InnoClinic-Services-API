@@ -18,7 +18,7 @@ namespace ServicesAPI.Persistence.Repositories
         {
             var query = "INSERT INTO Services(Id, Name, Price, Status, SpecializationId, CategoryId) " +
                 "VALUES (@Id, @Name, @Price, @Status, @SpecializationId, @CategoryId)";
-            
+
             var parameters = new DynamicParameters();
             parameters.Add("Id", service.Id);
             parameters.Add("Name", service.Name);
@@ -39,7 +39,7 @@ namespace ServicesAPI.Persistence.Repositories
                                             "Price = @Price," +
                                             "Status = @Status, " +
                                             "SpecializationId = @SpecializationId, " +
-                                            "CategoryId = @CategoryId" +
+                                            "CategoryId = @CategoryId " +
                                             "WHERE Id = @Id";
 
             var parameters = new DynamicParameters();
@@ -74,19 +74,20 @@ namespace ServicesAPI.Persistence.Repositories
         {
             var query = "SELECT * " +
                         "FROM Services JOIN Categories ON Categories.Id = CategoryId " +
-                        "WHERE Status = True, Categories.Name = @CategoryName " +
-                        "ORDER BY Id " +
+                        "WHERE Status = @Status AND Categories.Name = @CategoryName " +
+                        "ORDER BY Services.Id " +
                         "OFFSET @Skip ROWS " +
                         "FETCH NEXT @Take ROWS ONLY";
 
             var parameters = new DynamicParameters();
+            parameters.Add("Status", true);
             parameters.Add("CategoryName", categoryName);
-            parameters.Add("Skip", pageSize * (pageNumber-1));
+            parameters.Add("Skip", pageSize * (pageNumber - 1));
             parameters.Add("Take", pageSize);
 
             using (var connection = _context.CreateConnection())
             {
-                var services = connection.Query<Service>(query, parameters);
+                var services = connection.Query<Service, Category, Service>(query, (service, category) => { service.Category = category; return service; }, parameters);
                 return services.AsQueryable();
             }
         }
@@ -117,6 +118,20 @@ namespace ServicesAPI.Persistence.Repositories
             using (var connection = _context.CreateConnection())
             {
                 var service = await connection.QueryFirstOrDefaultAsync<Service>(query, parameters);
+                return service;
+            }
+        }
+
+        public async Task<IEnumerable<Service>> GetServicesBySpecializationIdAsync(Guid specializationId)
+        {
+            var query = "SELECT * FROM Services JOIN Categories ON Categories.Id = CategoryId " +
+                "WHERE SpecializationId = @SpecializationId";
+            var parameters = new DynamicParameters();
+            parameters.Add("SpecializationId", specializationId);
+
+            using (var connection = _context.CreateConnection())
+            {
+                var service = await connection.QueryAsync<Service, Category, Service>(query, (service, category) => { service.Category = category; return service; }, parameters);
                 return service;
             }
         }

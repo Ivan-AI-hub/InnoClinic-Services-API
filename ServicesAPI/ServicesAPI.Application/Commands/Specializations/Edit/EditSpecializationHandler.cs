@@ -7,8 +7,8 @@ namespace ServicesAPI.Application.Commands.Specializations.Edit
 {
     internal class EditSpecializationHandler : IRequestHandler<EditSpecialization>
     {
-        private ISpecializationRepository _specializationRepository;
-        private IMapper _mapper;
+        private readonly ISpecializationRepository _specializationRepository;
+        private readonly IMapper _mapper;
 
         public EditSpecializationHandler(ISpecializationRepository specializationRepository, IMapper mapper)
         {
@@ -19,8 +19,7 @@ namespace ServicesAPI.Application.Commands.Specializations.Edit
         public Task Handle(EditSpecialization request, CancellationToken cancellationToken)
         {
             var specialization = _mapper.Map<Specialization>(request);
-            specialization.Services.AddRange(request.Services);
-            return _specializationRepository.EditAsync(request.id, specialization, cancellationToken);
+            return _specializationRepository.EditAsync(request.Id, specialization, cancellationToken);
         }
     }
 }

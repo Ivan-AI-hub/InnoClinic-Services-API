@@ -1,7 +1,6 @@
 ﻿using MediatR;
 using Microsoft.AspNetCore.Mvc;
 using ServicesAPI.Application.Commands.Categories.Create;
-using ServicesAPI.Application.Commands.Services.Create;
 
 namespace ServicesAPI.Presentation.Controllers
 {
@@ -9,7 +8,7 @@ namespace ServicesAPI.Presentation.Controllers
     [Route("categories/")]
     public class CategoryController : ControllerBase
     {
-        private IMediator _mediator;
+        private readonly IMediator _mediator;
 
         public CategoryController(IMediator mediator)
         {

@@ -9,12 +9,12 @@ namespace ServicesAPI.Persistence.Migrations
         {
             Create.Table("Categories")
                 .WithColumn("Id").AsGuid().NotNullable().PrimaryKey()
-                .WithColumn("Name").AsString().NotNullable()
+                .WithColumn("Name").AsString().NotNullable().Unique()
                 .WithColumn("TimeSlotSize").AsInt32().NotNullable();
 
             Create.Table("Specializations")
                 .WithColumn("Id").AsGuid().NotNullable().PrimaryKey()
-                .WithColumn("Name").AsString().NotNullable()
+                .WithColumn("Name").AsString().NotNullable().Unique()
                 .WithColumn("IsActive").AsBoolean().NotNullable();
 
             Create.Table("Services")

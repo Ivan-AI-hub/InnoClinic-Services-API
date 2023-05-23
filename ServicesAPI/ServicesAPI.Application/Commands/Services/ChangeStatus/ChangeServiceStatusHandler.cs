@@ -5,7 +5,7 @@ namespace ServicesAPI.Application.Commands.Services.ChangeStatus
 {
     internal class ChangeServiceStatusHandler : IRequestHandler<ChangeServiceStatus>
     {
-        private IServiceRepository _serviceRepository;
+        private readonly IServiceRepository _serviceRepository;
 
         public ChangeServiceStatusHandler(IServiceRepository serviceRepository)
         {

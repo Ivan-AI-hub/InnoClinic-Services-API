@@ -1,15 +1,11 @@
-using FluentMigrator.Runner;
 using FluentValidation;
 using MediatR;
-using Microsoft.AspNetCore.Builder;
-using Microsoft.Extensions.Configuration;
 using ServicesAPI.Application.Behaviors;
 using ServicesAPI.Application.Commands.Services.Create;
 using ServicesAPI.Application.Mappings;
 using ServicesAPI.Application.Validators;
 using ServicesAPI.Web.Extensions;
 using ServicesAPI.Web.Middlewares;
-using System.Reflection;
 
 var builder = WebApplication.CreateBuilder(args);
 

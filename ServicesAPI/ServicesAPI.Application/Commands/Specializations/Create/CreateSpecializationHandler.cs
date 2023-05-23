@@ -7,8 +7,8 @@ namespace ServicesAPI.Application.Commands.Specializations.Create
 {
     internal class CreateSpecializationHandler : IRequestHandler<CreateSpecialization, Specialization>
     {
-        private ISpecializationRepository _specializationRepository;
-        private IMapper _mapper;
+        private readonly ISpecializationRepository _specializationRepository;
+        private readonly IMapper _mapper;
 
         public CreateSpecializationHandler(ISpecializationRepository specializationRepository, IMapper mapper)
         {

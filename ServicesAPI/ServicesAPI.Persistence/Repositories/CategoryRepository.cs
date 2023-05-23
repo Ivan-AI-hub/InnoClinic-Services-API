@@ -41,5 +41,18 @@ namespace ServicesAPI.Persistence.Repositories
                 return category;
             }
         }
+
+        public async Task<Category?> GetByNameAsync(string name, CancellationToken cancellationToken = default)
+        {
+            var query = "SELECT * FROM Categories WHERE Name = @Name";
+            var parameters = new DynamicParameters();
+            parameters.Add("Name", name);
+
+            using (var connection = _context.CreateConnection())
+            {
+                var category = await connection.QueryFirstOrDefaultAsync<Category>(query, parameters);
+                return category;
+            }
+        }
     }
 }

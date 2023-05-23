@@ -7,7 +7,7 @@
         public bool IsActive { get; set; }
         public List<Service> Services { get; private set; }
 
-        public Specialization() {Services = new List<Service>();}
+        public Specialization() { Services = new List<Service>(); }
         public Specialization(string name, bool isActive)
         {
             Name = name;
