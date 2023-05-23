@@ -21,6 +21,11 @@ namespace ServicesAPI.Application.Commands.Services.Edit
 
         public async Task Handle(EditService request, CancellationToken cancellationToken)
         {
+            if (!_serviceRepository.IsServiceExist(request.Id))
+            {
+                throw new ServiceNotFoundException(request.Id);
+            }
+
             var category = await _categoryRepository.GetByNameAsync(request.CategoryName, cancellationToken);
             if (category == null)
             {

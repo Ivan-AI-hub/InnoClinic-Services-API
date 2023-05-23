@@ -5,6 +5,8 @@ using ServicesAPI.Application.Commands.Services.Create;
 using ServicesAPI.Application.Commands.Services.Edit;
 using ServicesAPI.Application.Queries.Services.GetByCategory;
 using ServicesAPI.Application.Queries.Services.GetById;
+using ServicesAPI.Domain;
+using ServicesAPI.Presentation.Models.ErrorModels;
 
 namespace ServicesAPI.Presentation.Controllers
 {
@@ -19,13 +21,18 @@ namespace ServicesAPI.Presentation.Controllers
         }
 
         [HttpGet("{ServiceCategoryName}/{PageSize}/{PageNumber}")]
-        public async Task<IActionResult> GetByCategory([FromRoute] GetServicesByCategory request, CancellationToken cancellationToken = default)
+        [ProducesResponseType(typeof(IEnumerable<Service>), 200)]
+        [ProducesResponseType(typeof(ErrorDetails), 500)]
+        public async Task<IActionResult> GetByCategory([FromRoute] GetActiveServicesByCategory request, CancellationToken cancellationToken = default)
         {
             var services = await _mediator.Send(request, cancellationToken);
             return Ok(services);
         }
 
         [HttpGet("{Id}")]
+        [ProducesResponseType(typeof(Service), 200)]
+        [ProducesResponseType(typeof(ErrorDetails), 400)]
+        [ProducesResponseType(typeof(ErrorDetails), 500)]
         public async Task<IActionResult> GetServiceInfo([FromRoute] GetServiceById request, CancellationToken cancellationToken = default)
         {
             var service = await _mediator.Send(request, cancellationToken);
@@ -33,6 +40,9 @@ namespace ServicesAPI.Presentation.Controllers
         }
 
         [HttpPut("{id}/status")]
+        [ProducesResponseType(202)]
+        [ProducesResponseType(typeof(ErrorDetails), 400)]
+        [ProducesResponseType(typeof(ErrorDetails), 500)]
         public async Task<IActionResult> ChangeStatus([FromRoute] Guid id, bool status, CancellationToken cancellationToken = default)
         {
             await _mediator.Send(new ChangeServiceStatus(id, status), cancellationToken);
@@ -40,6 +50,9 @@ namespace ServicesAPI.Presentation.Controllers
         }
 
         [HttpPut("{id}")]
+        [ProducesResponseType(202)]
+        [ProducesResponseType(typeof(ErrorDetails), 400)]
+        [ProducesResponseType(typeof(ErrorDetails), 500)]
         public async Task<IActionResult> EditService([FromRoute] Guid id,
                                                      string name,
                                                      int price,
@@ -53,6 +66,8 @@ namespace ServicesAPI.Presentation.Controllers
         }
 
         [HttpPost]
+        [ProducesResponseType(typeof(Service), 200)]
+        [ProducesResponseType(typeof(ErrorDetails), 500)]
         public async Task<IActionResult> CreateService(CreateService request, CancellationToken cancellationToken = default)
         {
             var service = await _mediator.Send(request, cancellationToken);

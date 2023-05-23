@@ -1,6 +1,8 @@
 ﻿using MediatR;
 using Microsoft.AspNetCore.Mvc;
 using ServicesAPI.Application.Commands.Categories.Create;
+using ServicesAPI.Domain;
+using ServicesAPI.Presentation.Models.ErrorModels;
 
 namespace ServicesAPI.Presentation.Controllers
 {
@@ -16,6 +18,8 @@ namespace ServicesAPI.Presentation.Controllers
         }
 
         [HttpPost]
+        [ProducesResponseType(typeof(Category), 200)]
+        [ProducesResponseType(typeof(ErrorDetails), 500)]
         public async Task<IActionResult> CreateCategory(CreateCategory request, CancellationToken cancellationToken = default)
         {
             await _mediator.Send(request, cancellationToken);

@@ -70,7 +70,7 @@ namespace ServicesAPI.Persistence.Repositories
             }
         }
 
-        public IQueryable<Service> GetActiveServicesByCategories(int pageSize, int pageNumber, string categoryName)
+        public IQueryable<Service> GetActiveServicesByCategory(int pageSize, int pageNumber, string categoryName)
         {
             var query = "SELECT * " +
                         "FROM Services JOIN Categories ON Categories.Id = CategoryId " +
@@ -87,7 +87,10 @@ namespace ServicesAPI.Persistence.Repositories
 
             using (var connection = _context.CreateConnection())
             {
-                var services = connection.Query<Service, Category, Service>(query, (service, category) => { service.Category = category; return service; }, parameters);
+                var services = connection
+                    .Query<Service, Category, Service>(query,
+                                                       (service, category) => { service.Category = category; return service; },
+                                                       parameters);
                 return services.AsQueryable();
             }
         }
@@ -131,7 +134,23 @@ namespace ServicesAPI.Persistence.Repositories
 
             using (var connection = _context.CreateConnection())
             {
-                var service = await connection.QueryAsync<Service, Category, Service>(query, (service, category) => { service.Category = category; return service; }, parameters);
+                var service = await connection
+                    .QueryAsync<Service, Category, Service>(query,
+                                                            (service, category) => { service.Category = category; return service; },
+                                                            parameters);
+                return service;
+            }
+        }
+
+        public bool IsServiceExist(Guid id)
+        {
+            var query = "select count(1) from Services where Id=@id";
+            var parameters = new DynamicParameters();
+            parameters.Add("id", id);
+
+            using (var connection = _context.CreateConnection())
+            {
+                var service = connection.ExecuteScalar<bool>(query, parameters);
                 return service;
             }
         }

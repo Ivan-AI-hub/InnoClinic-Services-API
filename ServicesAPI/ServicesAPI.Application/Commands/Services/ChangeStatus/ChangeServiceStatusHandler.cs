@@ -1,4 +1,5 @@
 ﻿using MediatR;
+using ServicesAPI.Domain.Exceptions;
 using ServicesAPI.Domain.Interfaces;
 
 namespace ServicesAPI.Application.Commands.Services.ChangeStatus
@@ -14,6 +15,10 @@ namespace ServicesAPI.Application.Commands.Services.ChangeStatus
 
         public Task Handle(ChangeServiceStatus request, CancellationToken cancellationToken)
         {
+            if (!_serviceRepository.IsServiceExist(request.Id))
+            {
+                throw new ServiceNotFoundException(request.Id);
+            }
             return _serviceRepository.EditStatusAsync(request.Id, request.Status, cancellationToken);
         }
     }

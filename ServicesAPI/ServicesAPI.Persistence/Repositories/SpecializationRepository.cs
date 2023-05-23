@@ -87,5 +87,18 @@ namespace ServicesAPI.Persistence.Repositories
                 return specializations.AsQueryable();
             }
         }
+
+        public bool IsSpecializationExist(Guid id)
+        {
+            var query = "select count(1) from Specializations where Id=@id";
+            var parameters = new DynamicParameters();
+            parameters.Add("id", id);
+
+            using (var connection = _context.CreateConnection())
+            {
+                var service = connection.ExecuteScalar<bool>(query, parameters);
+                return service;
+            }
+        }
     }
 }
