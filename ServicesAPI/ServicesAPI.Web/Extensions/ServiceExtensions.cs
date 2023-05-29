@@ -1,4 +1,5 @@
 ﻿using FluentMigrator.Runner;
+using MassTransit;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.OpenApi.Models;
 using ServicesAPI.Domain.Interfaces;
@@ -6,6 +7,7 @@ using ServicesAPI.Persistence;
 using ServicesAPI.Persistence.Migrations;
 using ServicesAPI.Persistence.Repositories;
 using ServicesAPI.Persistence.Settings;
+using ServicesAPI.Web.Settings;
 
 namespace ServicesAPI.Web.Extensions
 {
@@ -14,8 +16,11 @@ namespace ServicesAPI.Web.Extensions
         public static void ConfigureSqlContext(this IServiceCollection services, IConfiguration configuration, string contextSettingsSectionName)
         {
             services.Configure<ContextSettings>(configuration.GetSection(contextSettingsSectionName));
+
             services.AddFluentMigratorCore().ConfigureRunner(c => c.AddSqlServer2016()
-                .WithGlobalConnectionString(configuration.GetSection(contextSettingsSectionName).GetSection("RegularConnectionString").Value)
+                .WithGlobalConnectionString(configuration
+                                            .GetSection(contextSettingsSectionName)
+                                            .GetSection(nameof(ContextSettings.RegularConnectionString)).Value)
                 .ScanIn(typeof(Database).Assembly).For.Migrations());
 
             services.AddSingleton<Database>();
@@ -37,6 +42,23 @@ namespace ServicesAPI.Web.Extensions
             });
         }
 
+        public static void ConfigureMassTransit(this IServiceCollection services, IConfiguration configuration, string massTransitSettingsName)
+        {
+            var settings = configuration.GetSection(massTransitSettingsName).Get<MassTransitSettings>();
+            services.AddMassTransit(x =>
+            {
+                x.UsingRabbitMq((context, cfg) =>
+                {
+                    cfg.Host(settings.Host, settings.VirtualHost, h =>
+                    {
+                        h.Username(settings.UserName);
+                        h.Password(settings.Password);
+                    });
+                    cfg.AddRawJsonSerializer();
+                    cfg.ConfigureEndpoints(context);
+                });
+            });
+        }
         public static void ConfigureSwagger(this IServiceCollection services)
         {
             services.AddSwaggerGen(s =>

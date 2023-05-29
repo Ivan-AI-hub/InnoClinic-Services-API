@@ -22,6 +22,8 @@ builder.Services.AddValidatorsFromAssemblyContaining<CreateServiceValidator>();
 builder.Services.AddMediatR(cfg => cfg.RegisterServicesFromAssemblies(typeof(CreateService).Assembly));
 builder.Services.AddTransient(typeof(IPipelineBehavior<,>), typeof(ValidationBehavior<,>));
 
+builder.Services.ConfigureMassTransit(builder.Configuration, "MassTransitSettings");
+
 var app = builder.Build();
 app.MigrateDatabase();
 
