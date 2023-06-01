@@ -1,10 +1,10 @@
 ﻿using AutoMapper;
 using MassTransit;
 using MediatR;
-using ServicesAPI.Application.SharedModels;
 using ServicesAPI.Domain;
 using ServicesAPI.Domain.Exceptions;
 using ServicesAPI.Domain.Interfaces;
+using SharedEvents.Models;
 
 namespace ServicesAPI.Application.Commands.Services.Edit
 {
@@ -41,7 +41,7 @@ namespace ServicesAPI.Application.Commands.Services.Edit
             service.Category = category;
             await _serviceRepository.EditAsync(request.Id, service, cancellationToken);
 
-            await _publishEndpoint.Publish(new ServiceNameUpdatedEvent(request.Id, request.Name));
+            await _publishEndpoint.Publish(new ServiceNameUpdated(request.Id, request.Name));
         }
     }
 }
