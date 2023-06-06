@@ -41,7 +41,7 @@ namespace ServicesAPI.Application.Commands.Services.Edit
             service.Category = category;
             await _serviceRepository.EditAsync(request.Id, service, cancellationToken);
 
-            await _publishEndpoint.Publish(new ServiceNameUpdated(request.Id, request.Name));
+            await _publishEndpoint.Publish(new ServiceUpdated(request.Id, request.Name, request.Price.ToString()), cancellationToken);
         }
     }
 }
