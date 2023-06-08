@@ -5,7 +5,7 @@ using ServicesAPI.Domain.Interfaces;
 
 namespace ServicesAPI.Application.Commands.Categories.Create
 {
-    internal class CreateCategoryHandler : IRequestHandler<CreateCategory>
+    public class CreateCategoryHandler : IRequestHandler<CreateCategory>
     {
         private readonly ICategoryRepository _categoryRepository;
         private readonly IMapper _mapper;

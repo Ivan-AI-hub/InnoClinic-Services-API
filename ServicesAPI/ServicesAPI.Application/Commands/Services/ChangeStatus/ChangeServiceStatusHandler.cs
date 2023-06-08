@@ -4,7 +4,7 @@ using ServicesAPI.Domain.Interfaces;
 
 namespace ServicesAPI.Application.Commands.Services.ChangeStatus
 {
-    internal class ChangeServiceStatusHandler : IRequestHandler<ChangeServiceStatus>
+    public class ChangeServiceStatusHandler : IRequestHandler<ChangeServiceStatus>
     {
         private readonly IServiceRepository _serviceRepository;
 

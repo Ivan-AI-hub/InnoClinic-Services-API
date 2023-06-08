@@ -8,7 +8,7 @@ using SharedEvents.Models;
 
 namespace ServicesAPI.Application.Commands.Services.Edit
 {
-    internal class EditServiceHandler : IRequestHandler<EditService>
+    public class EditServiceHandler : IRequestHandler<EditService>
     {
         private readonly IServiceRepository _serviceRepository;
         private readonly ICategoryRepository _categoryRepository;

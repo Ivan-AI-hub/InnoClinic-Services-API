@@ -5,7 +5,7 @@ using ServicesAPI.Domain.Interfaces;
 
 namespace ServicesAPI.Application.Queries.Specializations.GetById
 {
-    internal class GetSpecializationByIdHandler : IRequestHandler<GetSpecializationById, Specialization>
+    public class GetSpecializationByIdHandler : IRequestHandler<GetSpecializationById, Specialization>
     {
         public ISpecializationRepository _specializationRepository;
         public IServiceRepository _serviceRepository;

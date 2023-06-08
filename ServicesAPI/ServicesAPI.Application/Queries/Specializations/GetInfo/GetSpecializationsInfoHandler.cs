@@ -4,7 +4,7 @@ using ServicesAPI.Domain.Interfaces;
 
 namespace ServicesAPI.Application.Queries.Specializations.GetInfo
 {
-    internal class GetSpecializationsInfoHandler : IRequestHandler<GetSpecializationsInfo, IEnumerable<Specialization>>
+    public class GetSpecializationsInfoHandler : IRequestHandler<GetSpecializationsInfo, IEnumerable<Specialization>>
     {
         public ISpecializationRepository _specializationRepository;
         public GetSpecializationsInfoHandler(ISpecializationRepository specializationRepository)

@@ -8,7 +8,7 @@ using SharedEvents.Models;
 
 namespace ServicesAPI.Application.Commands.Specializations.Edit
 {
-    internal class EditSpecializationHandler : IRequestHandler<EditSpecialization>
+    public class EditSpecializationHandler : IRequestHandler<EditSpecialization>
     {
         private readonly ISpecializationRepository _specializationRepository;
         private readonly IPublishEndpoint _publishEndpoint;

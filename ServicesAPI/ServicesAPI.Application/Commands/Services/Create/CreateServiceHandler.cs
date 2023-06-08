@@ -8,7 +8,7 @@ using SharedEvents.Models;
 
 namespace ServicesAPI.Application.Commands.Services.Create
 {
-    internal class CreateServiceHandler : IRequestHandler<CreateService, Service>
+    public class CreateServiceHandler : IRequestHandler<CreateService, Service>
     {
         private readonly IServiceRepository _serviceRepository;
         private readonly ICategoryRepository _categoryRepository;

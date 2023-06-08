@@ -7,7 +7,7 @@ using SharedEvents.Models;
 
 namespace ServicesAPI.Application.Commands.Specializations.Create
 {
-    internal class CreateSpecializationHandler : IRequestHandler<CreateSpecialization, Specialization>
+    public class CreateSpecializationHandler : IRequestHandler<CreateSpecialization, Specialization>
     {
         private readonly ISpecializationRepository _specializationRepository;
         private readonly IPublishEndpoint _publishEndpoint;
