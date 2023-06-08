@@ -33,7 +33,7 @@ namespace ServicesAPI.Presentation.Controllers
         [ProducesResponseType(typeof(Service), 200)]
         [ProducesResponseType(typeof(ErrorDetails), 400)]
         [ProducesResponseType(typeof(ErrorDetails), 500)]
-        public async Task<IActionResult> GetServiceInfo([FromRoute] GetServiceById request, CancellationToken cancellationToken = default)
+        public async Task<IActionResult> GetServiceById([FromRoute] GetServiceById request, CancellationToken cancellationToken = default)
         {
             var service = await _mediator.Send(request, cancellationToken);
             return Ok(service);

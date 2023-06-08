@@ -12,7 +12,7 @@ using ServicesAPI.Tests;
 
 namespace ServicesAPI.Tests.Application
 {
-    public class SpecializationSpecializationTest
+    public class SpecializationServiceTest
     {
         [Theory, AutoMoqData]
         public async Task CreateSpecialization_Successfuly(CreateSpecialization createSpecialization,
