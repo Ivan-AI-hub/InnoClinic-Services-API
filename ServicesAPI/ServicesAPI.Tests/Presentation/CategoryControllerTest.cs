@@ -9,7 +9,9 @@ namespace ServicesAPI.Tests.Presentation
         [Theory, AutoMoqData]
         public async Task CreateCategory_Successfuly(CategoryController controller, CreateCategory createCategory)
         {
+            //act
             var result = await controller.CreateCategory(createCategory);
+            //assert
             result.Should().BeOfType<NoContentResult>();
         }
     }

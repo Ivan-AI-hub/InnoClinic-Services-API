@@ -17,8 +17,10 @@ namespace ServicesAPI.Tests.Application
                                                Mock<ICategoryRepository> categoryRepository,
                                                [ApplicationMapper][Frozen] IMapper mapper)
         {
+            //act
             var handler = new CreateCategoryHandler(categoryRepository.Object, mapper);
 
+            //assert
             handler.Handle(createCategory, default);
         }
     }

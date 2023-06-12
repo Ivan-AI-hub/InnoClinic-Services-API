@@ -30,13 +30,16 @@ namespace ServicesAPI.Tests.Application
                 [Frozen] Mock<IPublishEndpoint> publishEndpoint,
                 [ApplicationMapper][Frozen] IMapper mapper)
         {
+            //arrange
             categoryRepository.Setup(x => x.GetByNameAsync(createService.CategoryName, It.IsAny<CancellationToken>()))
                               .Returns(Task.FromResult<Category>(null));
 
             var handler = new CreateServiceHandler(serviceRepository.Object, categoryRepository.Object, mapper, publishEndpoint.Object);
 
+            //act
             var act = () => handler.Handle(createService, default);
 
+            //assert
             await Assert.ThrowsAsync<CategoryNotFoundException>(act);
         }
 
@@ -44,9 +47,11 @@ namespace ServicesAPI.Tests.Application
         public async Task ChangeStatus_Successfuly(ChangeServiceStatus changeServiceStatus,
             [Frozen] Mock<IServiceRepository> serviceRepository)
         {
+            //arrange
             serviceRepository.Setup(x => x.IsServiceExist(changeServiceStatus.Id)).Returns(true);
             var handler = new ChangeServiceStatusHandler(serviceRepository.Object);
 
+            //act
             await handler.Handle(changeServiceStatus, default);
         }
 
