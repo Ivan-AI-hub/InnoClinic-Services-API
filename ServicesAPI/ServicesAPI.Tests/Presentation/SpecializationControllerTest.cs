@@ -1,11 +1,9 @@
-﻿using FluentAssertions;
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
 using ServicesAPI.Application.Commands.Specializations.ChangeStatus;
 using ServicesAPI.Application.Commands.Specializations.Create;
 using ServicesAPI.Application.Commands.Specializations.Edit;
 using ServicesAPI.Application.Queries.Specializations.GetInfo;
 using ServicesAPI.Presentation.Controllers;
-using ServicesAPI.Tests;
 
 namespace ServicesAPI.Tests.Presentation
 {

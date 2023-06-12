@@ -3,7 +3,7 @@ using AutoFixture.Community.AutoMapper;
 using ServicesAPI.Application.Mappings;
 using System.Reflection;
 
-namespace ServicesAPI.Tests
+namespace ServicesAPI.Tests.Attributes
 {
     [AttributeUsage(AttributeTargets.Parameter, AllowMultiple = false)]
     public class ApplicationMapperAttribute : Attribute, IParameterCustomizationSource

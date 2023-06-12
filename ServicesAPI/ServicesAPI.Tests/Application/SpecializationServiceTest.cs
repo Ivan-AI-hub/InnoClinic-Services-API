@@ -1,14 +1,11 @@
-﻿using FluentAssertions;
-using MassTransit;
+﻿using MassTransit;
 using ServicesAPI.Application.Commands.Specializations.ChangeStatus;
 using ServicesAPI.Application.Commands.Specializations.Create;
 using ServicesAPI.Application.Commands.Specializations.Edit;
 using ServicesAPI.Application.Queries.Specializations.GetById;
 using ServicesAPI.Application.Queries.Specializations.GetInfo;
-using ServicesAPI.Domain;
 using ServicesAPI.Domain.Exceptions;
 using ServicesAPI.Domain.Interfaces;
-using ServicesAPI.Tests;
 
 namespace ServicesAPI.Tests.Application
 {

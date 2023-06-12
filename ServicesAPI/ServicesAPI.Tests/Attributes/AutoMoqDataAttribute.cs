@@ -1,8 +1,7 @@
-﻿using AutoFixture.AutoMoq;
-using AutoFixture.Xunit2;
-using AutoFixture;
+﻿using AutoFixture;
+using AutoFixture.AutoMoq;
 
-namespace ServicesAPI.Tests
+namespace ServicesAPI.Tests.Attributes
 {
     public class AutoMoqDataAttribute : AutoDataAttribute
     {

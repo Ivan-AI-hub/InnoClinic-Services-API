@@ -13,7 +13,7 @@ namespace ServicesAPI.Persistence
             _settings = settings.Value;
         }
 
-        public IDbConnection CreateConnection() => new SqlConnection(_settings.RegularConnectionString);
-        public IDbConnection CreateMasterConnection() => new SqlConnection(_settings.MasterConnectionString);
+        public virtual IDbConnection CreateConnection() => new SqlConnection(_settings.RegularConnectionString);
+        public virtual IDbConnection CreateMasterConnection() => new SqlConnection(_settings.MasterConnectionString);
     }
 }

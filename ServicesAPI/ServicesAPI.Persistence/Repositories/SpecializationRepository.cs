@@ -96,8 +96,7 @@ namespace ServicesAPI.Persistence.Repositories
 
             using (var connection = _context.CreateConnection())
             {
-                var service = connection.ExecuteScalar<bool>(query, parameters);
-                return service;
+                return connection.ExecuteScalar<bool>(query, parameters);
             }
         }
     }

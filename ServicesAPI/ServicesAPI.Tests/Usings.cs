@@ -1,4 +1,9 @@
-global using Xunit;
 global using AutoFixture.Xunit2;
 global using AutoMapper;
+global using FluentAssertions;
 global using Moq;
+global using ServicesAPI.Domain;
+global using ServicesAPI.Persistence;
+global using ServicesAPI.Persistence.Repositories;
+global using Xunit;
+global using ServicesAPI.Tests.Attributes;

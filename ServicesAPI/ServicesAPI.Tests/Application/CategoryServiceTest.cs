@@ -1,8 +1,5 @@
-﻿using AutoFixture;
-using AutoFixture.AutoMoq;
-using ServicesAPI.Application.Commands.Categories.Create;
+﻿using ServicesAPI.Application.Commands.Categories.Create;
 using ServicesAPI.Application.Mappings;
-using ServicesAPI.Domain;
 using ServicesAPI.Domain.Interfaces;
 
 namespace ServicesAPI.Tests.Application

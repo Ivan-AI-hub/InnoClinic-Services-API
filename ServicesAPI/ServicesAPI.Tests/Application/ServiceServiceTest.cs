@@ -1,11 +1,9 @@
-﻿using FluentAssertions;
-using MassTransit;
+﻿using MassTransit;
 using ServicesAPI.Application.Commands.Services.ChangeStatus;
 using ServicesAPI.Application.Commands.Services.Create;
 using ServicesAPI.Application.Commands.Services.Edit;
 using ServicesAPI.Application.Queries.Services.GetByCategory;
 using ServicesAPI.Application.Queries.Services.GetById;
-using ServicesAPI.Domain;
 using ServicesAPI.Domain.Exceptions;
 using ServicesAPI.Domain.Interfaces;
 
@@ -43,7 +41,7 @@ namespace ServicesAPI.Tests.Application
         }
 
         [Theory, AutoMoqData]
-        public async Task ChangeStatus_Successfuly(ChangeServiceStatus changeServiceStatus, 
+        public async Task ChangeStatus_Successfuly(ChangeServiceStatus changeServiceStatus,
             [Frozen] Mock<IServiceRepository> serviceRepository)
         {
             serviceRepository.Setup(x => x.IsServiceExist(changeServiceStatus.Id)).Returns(true);

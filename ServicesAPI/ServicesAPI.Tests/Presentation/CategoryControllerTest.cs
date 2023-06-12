@@ -1,5 +1,4 @@
-﻿using FluentAssertions;
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
 using ServicesAPI.Application.Commands.Categories.Create;
 using ServicesAPI.Presentation.Controllers;
 
