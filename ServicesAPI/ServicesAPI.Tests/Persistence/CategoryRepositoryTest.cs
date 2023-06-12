@@ -5,10 +5,7 @@
         [Theory, AutoMoqData]
         public async Task Create_Successfuly(Category category, [Frozen] Mock<ServicesContext> context)
         {
-            var db = new InMemoryDatabase();
-            db.CreateTable<Category>("Categories");
-            context.Setup(x => x.CreateConnection()).Returns(() => db.OpenConnection());
-            var rep = new CategoryRepository(context.Object);
+            var rep = GetCategoryRepository(context);
 
             await rep.CreateAsync(category);
             var categoryGottenById = await rep.GetByIdAsync(category.Id);
@@ -23,10 +20,7 @@
         [Theory, AutoMoqData]
         public async Task GetById_Returns_Null(Guid id, [Frozen] Mock<ServicesContext> context)
         {
-            var db = new InMemoryDatabase();
-            db.CreateTable<Category>("Categories");
-            context.Setup(x => x.CreateConnection()).Returns(() => db.OpenConnection());
-            var rep = new CategoryRepository(context.Object);
+            var rep = GetCategoryRepository(context);
 
             var categoryGottenById = await rep.GetByIdAsync(id);
 
@@ -36,14 +30,19 @@
         [Theory, AutoMoqData]
         public async Task GetByName_Returns_Null(string name, [Frozen] Mock<ServicesContext> context)
         {
-            var db = new InMemoryDatabase();
-            db.CreateTable<Category>("Categories");
-            context.Setup(x => x.CreateConnection()).Returns(() => db.OpenConnection());
-            var rep = new CategoryRepository(context.Object);
+            var rep = GetCategoryRepository(context);
 
             var categoryGottenById = await rep.GetByNameAsync(name);
 
             categoryGottenById.Should().BeNull();
+        }
+
+        private CategoryRepository GetCategoryRepository(Mock<ServicesContext> context)
+        {
+            var db = new InMemoryDatabase();
+            db.CreateTable<Category>("Categories");
+            context.Setup(x => x.CreateConnection()).Returns(() => db.OpenConnection());
+            return new CategoryRepository(context.Object);
         }
     }
 }

@@ -5,10 +5,7 @@
         [Theory, AutoMoqData]
         public async Task Create_Successfuly(Specialization specialization, [Frozen] Mock<ServicesContext> context)
         {
-            var db = new InMemoryDatabase();
-            db.CreateTable<Specialization>("Specializations");
-            context.Setup(x => x.CreateConnection()).Returns(() => db.OpenConnection());
-            var rep = new SpecializationRepository(context.Object);
+            var rep = GetSpecializationRepository(context);
 
             await rep.CreateAsync(specialization);
             var addedSpecialization = await rep.GetByIdAsync(specialization.Id);
@@ -20,10 +17,7 @@
         [Theory, AutoMoqData]
         public async Task Edit_Successfuly(Specialization specialization, Specialization newSpecialization, [Frozen] Mock<ServicesContext> context)
         {
-            var db = new InMemoryDatabase();
-            db.CreateTable<Specialization>("Specializations");
-            context.Setup(x => x.CreateConnection()).Returns(() => db.OpenConnection());
-            var rep = new SpecializationRepository(context.Object);
+            var rep = GetSpecializationRepository(context);
 
             await rep.CreateAsync(specialization);
             await rep.EditAsync(specialization.Id, newSpecialization);
@@ -37,10 +31,7 @@
         [Theory, AutoMoqData]
         public async Task EditStatus_Successfuly(Specialization specialization, [Frozen] Mock<ServicesContext> context)
         {
-            var db = new InMemoryDatabase();
-            db.CreateTable<Specialization>("Specializations");
-            context.Setup(x => x.CreateConnection()).Returns(() => db.OpenConnection());
-            var rep = new SpecializationRepository(context.Object);
+            var rep = GetSpecializationRepository(context);
 
             await rep.CreateAsync(specialization);
             await rep.EditStatusAsync(specialization.Id, !specialization.IsActive);
@@ -54,10 +45,7 @@
         [Theory, AutoMoqData]
         public async Task IsSpecializationExist_True(Specialization specialization, [Frozen] Mock<ServicesContext> context)
         {
-            var db = new InMemoryDatabase();
-            db.CreateTable<Specialization>("Specializations");
-            context.Setup(x => x.CreateConnection()).Returns(() => db.OpenConnection());
-            var rep = new SpecializationRepository(context.Object);
+            var rep = GetSpecializationRepository(context);
 
             await rep.CreateAsync(specialization);
             var result = rep.IsSpecializationExist(specialization.Id);
@@ -68,14 +56,19 @@
         [Theory, AutoMoqData]
         public void IsSpecializationExist_False(Guid randomId, [Frozen] Mock<ServicesContext> context)
         {
-            var db = new InMemoryDatabase();
-            db.CreateTable<Specialization>("Specializations");
-            context.Setup(x => x.CreateConnection()).Returns(() => db.OpenConnection());
-            var rep = new SpecializationRepository(context.Object);
+            var rep = GetSpecializationRepository(context);
 
             var result = rep.IsSpecializationExist(randomId);
 
             result.Should().BeFalse();
+        }
+
+        private SpecializationRepository GetSpecializationRepository(Mock<ServicesContext> context)
+        {
+            var db = new InMemoryDatabase();
+            db.CreateTable<Specialization>("Specializations");
+            context.Setup(x => x.CreateConnection()).Returns(() => db.OpenConnection());
+            return new SpecializationRepository(context.Object);
         }
     }
 }

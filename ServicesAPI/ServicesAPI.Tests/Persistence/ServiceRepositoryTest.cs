@@ -7,10 +7,8 @@
         {
             service.Specialization = null;
             service.Category = null;
-            var db = new InMemoryDatabase();
-            db.CreateTable<Service>("Services");
-            context.Setup(x => x.CreateConnection()).Returns(() => db.OpenConnection());
-            var rep = new ServiceRepository(context.Object);
+            var configuredContext = ConfigureServiceContext(context);
+            var rep = new ServiceRepository(configuredContext);
 
             await rep.CreateAsync(service);
             var addedService = await rep.GetByIdAsync(service.Id);
@@ -24,10 +22,8 @@
         {
             service.Specialization = null;
             service.Category = null;
-            var db = new InMemoryDatabase();
-            db.CreateTable<Service>("Services");
-            context.Setup(x => x.CreateConnection()).Returns(() => db.OpenConnection());
-            var rep = new ServiceRepository(context.Object);
+            var configuredContext = ConfigureServiceContext(context);
+            var rep = new ServiceRepository(configuredContext);
 
             await rep.CreateAsync(service);
             await rep.EditAsync(service.Id, newService);
@@ -44,10 +40,8 @@
         {
             service.Specialization = null;
             service.Category = null;
-            var db = new InMemoryDatabase();
-            db.CreateTable<Service>("Services");
-            context.Setup(x => x.CreateConnection()).Returns(() => db.OpenConnection());
-            var rep = new ServiceRepository(context.Object);
+            var configuredContext = ConfigureServiceContext(context);
+            var rep = new ServiceRepository(configuredContext);
 
             await rep.CreateAsync(service);
             await rep.EditStatusAsync(service.Id, !service.Status);
@@ -63,14 +57,9 @@
             service.Specialization = null;
             service.Category = category;
             service.Status = true;
-
-            var db = new InMemoryDatabase();
-            db.CreateTable<Service>("Services");
-            db.CreateTable<Category>("Categories");
-            context.Setup(x => x.CreateConnection()).Returns(() => db.OpenConnection());
-
-            var serviceRepository = new ServiceRepository(context.Object);
-            var categoryRepository = new CategoryRepository(context.Object);
+            var configuredContext = ConfigureServiceContext(context);
+            var serviceRepository = new ServiceRepository(configuredContext);
+            var categoryRepository = new CategoryRepository(configuredContext);
 
             await serviceRepository.CreateAsync(service);
             await categoryRepository.CreateAsync(category);
@@ -87,14 +76,9 @@
             service.Specialization = null;
             service.Category = category;
             service.Status = false;
-
-            var db = new InMemoryDatabase();
-            db.CreateTable<Service>("Services");
-            db.CreateTable<Category>("Categories");
-            context.Setup(x => x.CreateConnection()).Returns(() => db.OpenConnection());
-
-            var serviceRepository = new ServiceRepository(context.Object);
-            var categoryRepository = new CategoryRepository(context.Object);
+            var configuredContext = ConfigureServiceContext(context);
+            var serviceRepository = new ServiceRepository(configuredContext);
+            var categoryRepository = new CategoryRepository(configuredContext);
 
             await serviceRepository.CreateAsync(service);
             await categoryRepository.CreateAsync(category);
@@ -109,13 +93,8 @@
         {
             service.Specialization = null;
             service.Status = false;
-
-            var db = new InMemoryDatabase();
-            db.CreateTable<Service>("Services");
-            db.CreateTable<Category>("Categories");
-            context.Setup(x => x.CreateConnection()).Returns(() => db.OpenConnection());
-
-            var serviceRepository = new ServiceRepository(context.Object);
+            var configuredContext = ConfigureServiceContext(context);
+            var serviceRepository = new ServiceRepository(configuredContext);
 
             await serviceRepository.CreateAsync(service);
 
@@ -130,14 +109,9 @@
             service.Specialization = null;
             service.Category = category;
             service.Status = true;
-
-            var db = new InMemoryDatabase();
-            db.CreateTable<Service>("Services");
-            db.CreateTable<Category>("Categories");
-            context.Setup(x => x.CreateConnection()).Returns(() => db.OpenConnection());
-
-            var serviceRepository = new ServiceRepository(context.Object);
-            var categoryRepository = new CategoryRepository(context.Object);
+            var configuredContext = ConfigureServiceContext(context);
+            var serviceRepository = new ServiceRepository(configuredContext);
+            var categoryRepository = new CategoryRepository(configuredContext);
 
             await serviceRepository.CreateAsync(service);
             await categoryRepository.CreateAsync(category);
@@ -146,6 +120,15 @@
 
             addedService.Should().NotBeNull();
             addedService.Should().BeEquivalentTo(service);
+        }
+
+        private ServicesContext ConfigureServiceContext(Mock<ServicesContext> context)
+        {
+            var db = new InMemoryDatabase();
+            db.CreateTable<Service>("Services");
+            db.CreateTable<Category>("Categories");
+            context.Setup(x => x.CreateConnection()).Returns(() => db.OpenConnection());
+            return context.Object;
         }
     }
 }
