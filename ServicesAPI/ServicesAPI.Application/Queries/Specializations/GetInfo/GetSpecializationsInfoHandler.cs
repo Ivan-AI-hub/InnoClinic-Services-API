@@ -11,10 +11,10 @@ namespace ServicesAPI.Application.Queries.Specializations.GetInfo
         {
             _specializationRepository = specializationRepository;
         }
-        public Task<IEnumerable<Specialization>> Handle(GetSpecializationsInfo request, CancellationToken cancellationToken)
+        public async Task<IEnumerable<Specialization>> Handle(GetSpecializationsInfo request, CancellationToken cancellationToken)
         {
-            var specializations = _specializationRepository.GetSpecializationsWithoutServices(request.PageSize, request.PageNumber);
-            return Task.FromResult(specializations.AsEnumerable());
+            var specializations = await _specializationRepository.GetSpecializationsWithoutServicesAsync(request.PageSize, request.PageNumber, cancellationToken);
+            return specializations;
         }
     }
 }

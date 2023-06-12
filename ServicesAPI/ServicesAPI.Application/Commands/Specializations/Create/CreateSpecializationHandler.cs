@@ -24,7 +24,7 @@ namespace ServicesAPI.Application.Commands.Specializations.Create
         {
             var specialization = _mapper.Map<Specialization>(request);
             await _specializationRepository.CreateAsync(specialization, cancellationToken);
-            await _publishEndpoint.Publish(new SpecializationCreated(specialization.Id, request.Name, request.IsActive));
+            await _publishEndpoint.Publish(new SpecializationCreated(specialization.Id, request.Name, request.IsActive), cancellationToken);
 
             return specialization;
         }

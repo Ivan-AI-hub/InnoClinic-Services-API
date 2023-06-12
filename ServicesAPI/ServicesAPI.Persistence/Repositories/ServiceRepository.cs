@@ -29,7 +29,8 @@ namespace ServicesAPI.Persistence.Repositories
 
             using (var connection = _context.CreateConnection())
             {
-                await connection.ExecuteAsync(query, parameters);
+                var comand = new CommandDefinition(query, parameters, cancellationToken: cancellationToken);
+                await connection.ExecuteAsync(comand);
             }
         }
 
@@ -52,7 +53,8 @@ namespace ServicesAPI.Persistence.Repositories
 
             using (var connection = _context.CreateConnection())
             {
-                await connection.ExecuteAsync(query, parameters);
+                var comand = new CommandDefinition(query, parameters, cancellationToken: cancellationToken);
+                await connection.ExecuteAsync(comand);
             }
         }
 
@@ -66,11 +68,12 @@ namespace ServicesAPI.Persistence.Repositories
 
             using (var connection = _context.CreateConnection())
             {
-                await connection.ExecuteAsync(query, parameters);
+                var comand = new CommandDefinition(query, parameters, cancellationToken: cancellationToken);
+                await connection.ExecuteAsync(comand);
             }
         }
 
-        public IQueryable<Service> GetActiveServicesByCategory(int pageSize, int pageNumber, string categoryName)
+        public async Task<IEnumerable<Service>> GetActiveServicesByCategoryAsync(int pageSize, int pageNumber, string categoryName, CancellationToken cancellationToken = default)
         {
             var query = "SELECT * " +
                         "FROM Services JOIN Categories ON Categories.Id = CategoryId " +
@@ -87,15 +90,14 @@ namespace ServicesAPI.Persistence.Repositories
 
             using (var connection = _context.CreateConnection())
             {
-                var services = connection
-                    .Query<Service, Category, Service>(query,
-                                                       (service, category) => { service.Category = category; return service; },
-                                                       parameters);
-                return services.AsQueryable();
+                var comand = new CommandDefinition(query, parameters, cancellationToken: cancellationToken);
+                var services = await connection.QueryAsync<Service, Category, Service>(comand,
+                                                       (service, category) => { service.Category = category; return service; });
+                return services;
             }
         }
 
-        public IQueryable<Service> GetAll(int pageSize, int pageNumber)
+        public async Task<IEnumerable<Service>> GetAllAsync(int pageSize, int pageNumber, CancellationToken cancellationToken = default)
         {
             var query = "SELECT * FROM Services " +
                         "ORDER BY Id " +
@@ -107,8 +109,9 @@ namespace ServicesAPI.Persistence.Repositories
             parameters.Add("Take", pageSize);
             using (var connection = _context.CreateConnection())
             {
-                var services = connection.Query<Service>(query, parameters);
-                return services.AsQueryable();
+                var comand = new CommandDefinition(query, parameters, cancellationToken: cancellationToken);
+                var services = await connection.QueryAsync<Service>(comand);
+                return services;
             }
         }
 
@@ -120,12 +123,13 @@ namespace ServicesAPI.Persistence.Repositories
 
             using (var connection = _context.CreateConnection())
             {
-                var service = await connection.QueryFirstOrDefaultAsync<Service>(query, parameters);
+                var comand = new CommandDefinition(query, parameters, cancellationToken: cancellationToken);
+                var service = await connection.QueryFirstOrDefaultAsync<Service>(comand);
                 return service;
             }
         }
 
-        public async Task<IEnumerable<Service>> GetServicesBySpecializationIdAsync(Guid specializationId)
+        public async Task<IEnumerable<Service>> GetServicesBySpecializationIdAsync(Guid specializationId, CancellationToken cancellationToken = default)
         {
             var query = "SELECT * FROM Services JOIN Categories ON Categories.Id = CategoryId " +
                 "WHERE SpecializationId = @SpecializationId";
@@ -134,10 +138,9 @@ namespace ServicesAPI.Persistence.Repositories
 
             using (var connection = _context.CreateConnection())
             {
-                var service = await connection
-                    .QueryAsync<Service, Category, Service>(query,
-                                                            (service, category) => { service.Category = category; return service; },
-                                                            parameters);
+                var comand = new CommandDefinition(query, parameters, cancellationToken: cancellationToken);
+                var service = await connection.QueryAsync<Service, Category, Service>(comand,
+                                                            (service, category) => { service.Category = category; return service; });
                 return service;
             }
         }

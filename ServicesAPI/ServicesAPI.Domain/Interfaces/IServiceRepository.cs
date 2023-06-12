@@ -3,13 +3,13 @@
     public interface IServiceRepository
     {
         /// <returns>all services</returns>
-        public IQueryable<Service> GetAll(int pageSize, int pageNumber);
+        public Task<IEnumerable<Service>> GetAllAsync(int pageSize, int pageNumber, CancellationToken cancellationToken = default);
 
         /// <returns>all actives services that are contained in a category with the name = <paramref name="categoryName"/></returns>
-        public IQueryable<Service> GetActiveServicesByCategory(int pageSize, int pageNumber, string categoryName);
+        public Task<IEnumerable<Service>> GetActiveServicesByCategoryAsync(int pageSize, int pageNumber, string categoryName, CancellationToken cancellationToken = default);
 
         /// <returns>all services that are contained in a specialization with the ID = <paramref name="specializationId"/></returns>
-        public Task<IEnumerable<Service>> GetServicesBySpecializationIdAsync(Guid specializationId);
+        public Task<IEnumerable<Service>> GetServicesBySpecializationIdAsync(Guid specializationId, CancellationToken cancellationToken = default);
 
         /// <returns>the service with a specific ID if it was found or null</returns>
         public Task<Service?> GetByIdAsync(Guid id, CancellationToken cancellationToken = default);

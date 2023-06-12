@@ -25,7 +25,8 @@ namespace ServicesAPI.Persistence.Repositories
 
             using (var connection = _context.CreateConnection())
             {
-                await connection.ExecuteAsync(query, parameters);
+                var comand = new CommandDefinition(query, parameters, cancellationToken: cancellationToken);
+                await connection.ExecuteAsync(comand);
             }
         }
 
@@ -37,8 +38,8 @@ namespace ServicesAPI.Persistence.Repositories
 
             using (var connection = _context.CreateConnection())
             {
-                var category = await connection.QueryFirstOrDefaultAsync<Category>(query, parameters);
-                return category;
+                var comand = new CommandDefinition(query, parameters, cancellationToken: cancellationToken);
+                return await connection.QueryFirstOrDefaultAsync<Category>(comand);
             }
         }
 
@@ -50,8 +51,8 @@ namespace ServicesAPI.Persistence.Repositories
 
             using (var connection = _context.CreateConnection())
             {
-                var category = await connection.QueryFirstOrDefaultAsync<Category>(query, parameters);
-                return category;
+                var comand = new CommandDefinition(query, parameters, cancellationToken: cancellationToken);
+                return await connection.QueryFirstOrDefaultAsync<Category>(comand);
             }
         }
     }

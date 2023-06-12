@@ -16,12 +16,12 @@ namespace ServicesAPI.Application.Queries.Specializations.GetById
         }
         public async Task<Specialization> Handle(GetSpecializationById request, CancellationToken cancellationToken)
         {
-            var specialization = await _specializationRepository.GetByIdAsync(request.Id);
+            var specialization = await _specializationRepository.GetByIdAsync(request.Id, cancellationToken);
             if (specialization == null)
             {
                 throw new SpecializationNotFoundException(request.Id);
             }
-            specialization.Services.AddRange(await _serviceRepository.GetServicesBySpecializationIdAsync(request.Id));
+            specialization.Services.AddRange(await _serviceRepository.GetServicesBySpecializationIdAsync(request.Id, cancellationToken));
             return specialization;
         }
     }

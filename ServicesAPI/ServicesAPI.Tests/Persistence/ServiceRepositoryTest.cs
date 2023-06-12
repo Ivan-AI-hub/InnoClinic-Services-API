@@ -64,7 +64,7 @@
             await serviceRepository.CreateAsync(service);
             await categoryRepository.CreateAsync(category);
 
-            var addedService = serviceRepository.GetActiveServicesByCategory(1, 1, category.Name).FirstOrDefault();
+            var addedService = (await serviceRepository.GetActiveServicesByCategoryAsync(1, 1, category.Name)).FirstOrDefault();
 
             addedService.Should().NotBeNull();
             addedService.Should().BeEquivalentTo(service);
@@ -83,7 +83,7 @@
             await serviceRepository.CreateAsync(service);
             await categoryRepository.CreateAsync(category);
 
-            var services = serviceRepository.GetActiveServicesByCategory(1, 1, category.Name);
+            var services = await serviceRepository.GetActiveServicesByCategoryAsync(1, 1, category.Name);
 
             services.Should().BeEmpty();
         }
@@ -98,7 +98,7 @@
 
             await serviceRepository.CreateAsync(service);
 
-            var services = serviceRepository.GetActiveServicesByCategory(1, 1, categoryName);
+            var services = await serviceRepository.GetActiveServicesByCategoryAsync(1, 1, categoryName);
 
             services.Should().BeEmpty();
         }

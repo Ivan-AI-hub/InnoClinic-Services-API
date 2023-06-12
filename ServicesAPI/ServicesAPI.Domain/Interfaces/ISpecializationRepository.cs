@@ -3,7 +3,7 @@
     public interface ISpecializationRepository
     {
         /// <returns>specializations without services</returns>
-        public IQueryable<Specialization> GetSpecializationsWithoutServices(int pageSize, int pageNumber);
+        public Task<IEnumerable<Specialization>> GetSpecializationsWithoutServicesAsync(int pageSize, int pageNumber, CancellationToken cancellationToken = default);
 
         /// <returns>the specialization with a specific ID if it was found or null</returns>
         public Task<Specialization?> GetByIdAsync(Guid id, CancellationToken cancellationToken = default);

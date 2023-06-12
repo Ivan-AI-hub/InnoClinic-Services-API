@@ -11,10 +11,10 @@ namespace ServicesAPI.Application.Queries.Services.GetByCategory
         {
             _serviceRepository = serviceRepository;
         }
-        public Task<IEnumerable<Service>> Handle(GetActiveServicesByCategory request, CancellationToken cancellationToken)
+        public async Task<IEnumerable<Service>> Handle(GetActiveServicesByCategory request, CancellationToken cancellationToken)
         {
-            var services = _serviceRepository.GetActiveServicesByCategory(request.PageSize, request.PageNumber, request.ServiceCategoryName);
-            return Task.FromResult(services.AsEnumerable());
+            var services = await _serviceRepository.GetActiveServicesByCategoryAsync(request.PageSize, request.PageNumber, request.ServiceCategoryName);
+            return services;
         }
     }
 }

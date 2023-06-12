@@ -29,7 +29,7 @@ namespace ServicesAPI.Application.Commands.Specializations.Edit
             }
             var specialization = _mapper.Map<Specialization>(request);
             await _specializationRepository.EditAsync(request.Id, specialization, cancellationToken);
-            await _publishEndpoint.Publish(new SpecializationUpdated(request.Id, request.Name, request.IsActive));
+            await _publishEndpoint.Publish(new SpecializationUpdated(request.Id, request.Name, request.IsActive), cancellationToken);
         }
     }
 }

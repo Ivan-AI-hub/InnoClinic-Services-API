@@ -23,7 +23,8 @@ namespace ServicesAPI.Persistence.Repositories
 
             using (var connection = _context.CreateConnection())
             {
-                await connection.ExecuteAsync(query, parameters);
+                var comand = new CommandDefinition(query, parameters, cancellationToken: cancellationToken);
+                await connection.ExecuteAsync(comand);
             }
         }
 
@@ -40,7 +41,8 @@ namespace ServicesAPI.Persistence.Repositories
 
             using (var connection = _context.CreateConnection())
             {
-                await connection.ExecuteAsync(query, parameters);
+                var comand = new CommandDefinition(query, parameters, cancellationToken: cancellationToken);
+                await connection.ExecuteAsync(comand);
             }
         }
 
@@ -54,7 +56,8 @@ namespace ServicesAPI.Persistence.Repositories
 
             using (var connection = _context.CreateConnection())
             {
-                await connection.ExecuteAsync(query, parameters);
+                var comand = new CommandDefinition(query, parameters, cancellationToken: cancellationToken);
+                await connection.ExecuteAsync(comand);
             }
         }
 
@@ -66,12 +69,12 @@ namespace ServicesAPI.Persistence.Repositories
 
             using (var connection = _context.CreateConnection())
             {
-                var specialization = await connection.QueryFirstOrDefaultAsync<Specialization>(query, parameters);
-                return specialization;
+                var comand = new CommandDefinition(query, parameters, cancellationToken: cancellationToken);
+                return await connection.QueryFirstOrDefaultAsync<Specialization>(comand);
             }
         }
 
-        public IQueryable<Specialization> GetSpecializationsWithoutServices(int pageSize, int pageNumber)
+        public async Task<IEnumerable<Specialization>> GetSpecializationsWithoutServicesAsync(int pageSize, int pageNumber, CancellationToken cancellationToken = default)
         {
             var query = "SELECT * FROM Specializations " +
                 "ORDER BY Specializations.Id " +
@@ -83,8 +86,8 @@ namespace ServicesAPI.Persistence.Repositories
             parameters.Add("Take", pageSize);
             using (var connection = _context.CreateConnection())
             {
-                var specializations = connection.Query<Specialization>(query, parameters);
-                return specializations.AsQueryable();
+                var comand = new CommandDefinition(query, parameters, cancellationToken: cancellationToken);
+                return await connection.QueryAsync<Specialization>(comand);
             }
         }
 

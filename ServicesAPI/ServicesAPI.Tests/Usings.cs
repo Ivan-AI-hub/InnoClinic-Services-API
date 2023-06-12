@@ -5,5 +5,5 @@ global using Moq;
 global using ServicesAPI.Domain;
 global using ServicesAPI.Persistence;
 global using ServicesAPI.Persistence.Repositories;
-global using Xunit;
 global using ServicesAPI.Tests.Attributes;
+global using Xunit;
