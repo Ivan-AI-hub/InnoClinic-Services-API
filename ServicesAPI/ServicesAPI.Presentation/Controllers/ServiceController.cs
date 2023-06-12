@@ -22,6 +22,7 @@ namespace ServicesAPI.Presentation.Controllers
 
         [HttpGet("{ServiceCategoryName}/{PageSize}/{PageNumber}")]
         [ProducesResponseType(typeof(IEnumerable<Service>), 200)]
+        [ProducesResponseType(typeof(ErrorDetails), 404)]
         [ProducesResponseType(typeof(ErrorDetails), 500)]
         public async Task<IActionResult> GetByCategory([FromRoute] GetActiveServicesByCategory request, CancellationToken cancellationToken = default)
         {
@@ -31,7 +32,7 @@ namespace ServicesAPI.Presentation.Controllers
 
         [HttpGet("{Id}")]
         [ProducesResponseType(typeof(Service), 200)]
-        [ProducesResponseType(typeof(ErrorDetails), 400)]
+        [ProducesResponseType(typeof(ErrorDetails), 404)]
         [ProducesResponseType(typeof(ErrorDetails), 500)]
         public async Task<IActionResult> GetServiceById([FromRoute] GetServiceById request, CancellationToken cancellationToken = default)
         {
@@ -40,18 +41,20 @@ namespace ServicesAPI.Presentation.Controllers
         }
 
         [HttpPut("{id}/status")]
-        [ProducesResponseType(202)]
+        [ProducesResponseType(204)]
         [ProducesResponseType(typeof(ErrorDetails), 400)]
+        [ProducesResponseType(typeof(ErrorDetails), 404)]
         [ProducesResponseType(typeof(ErrorDetails), 500)]
         public async Task<IActionResult> ChangeStatus([FromRoute] Guid id, bool status, CancellationToken cancellationToken = default)
         {
             await _mediator.Send(new ChangeServiceStatus(id, status), cancellationToken);
-            return Accepted();
+            return NoContent();
         }
 
         [HttpPut("{id}")]
-        [ProducesResponseType(202)]
+        [ProducesResponseType(204)]
         [ProducesResponseType(typeof(ErrorDetails), 400)]
+        [ProducesResponseType(typeof(ErrorDetails), 404)]
         [ProducesResponseType(typeof(ErrorDetails), 500)]
         public async Task<IActionResult> EditService([FromRoute] Guid id,
                                                      string name,
@@ -62,16 +65,17 @@ namespace ServicesAPI.Presentation.Controllers
                                                      CancellationToken cancellationToken = default)
         {
             await _mediator.Send(new EditService(id, name, price, status, specializationId, categoryName), cancellationToken);
-            return Accepted();
+            return NoContent();
         }
 
         [HttpPost]
-        [ProducesResponseType(typeof(Service), 200)]
+        [ProducesResponseType(typeof(Service), 201)]
+        [ProducesResponseType(typeof(ErrorDetails), 400)]
         [ProducesResponseType(typeof(ErrorDetails), 500)]
         public async Task<IActionResult> CreateService(CreateService request, CancellationToken cancellationToken = default)
         {
             var service = await _mediator.Send(request, cancellationToken);
-            return Ok(service);
+            return CreatedAtAction(nameof(GetServiceById), new { Id = service.Id}, service);
         }
     }
 }

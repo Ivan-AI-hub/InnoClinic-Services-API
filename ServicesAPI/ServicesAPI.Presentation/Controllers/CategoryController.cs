@@ -18,12 +18,12 @@ namespace ServicesAPI.Presentation.Controllers
         }
 
         [HttpPost]
-        [ProducesResponseType(typeof(Category), 200)]
+        [ProducesResponseType(204)]
         [ProducesResponseType(typeof(ErrorDetails), 500)]
         public async Task<IActionResult> CreateCategory(CreateCategory request, CancellationToken cancellationToken = default)
         {
             await _mediator.Send(request, cancellationToken);
-            return Ok();
+            return NoContent();
         }
 
     }

@@ -14,7 +14,7 @@ builder.Services.ConfigureRepositories();
 builder.Services.ConfigureJWT(builder.Configuration);
 builder.Services.ConfigureSwagger();
 
-builder.Services.AddControllers();
+builder.Services.AddControllers(options => options.SuppressAsyncSuffixInActionNames = false);
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddAutoMapper(typeof(ApplicationMappingProfile));
 

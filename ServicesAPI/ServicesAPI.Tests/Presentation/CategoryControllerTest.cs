@@ -10,7 +10,7 @@ namespace ServicesAPI.Tests.Presentation
         public async Task CreateCategory_Successfuly(CategoryController controller, CreateCategory createCategory)
         {
             var result = await controller.CreateCategory(createCategory);
-            result.Should().BeOfType<OkResult>();
+            result.Should().BeOfType<NoContentResult>();
         }
     }
 }

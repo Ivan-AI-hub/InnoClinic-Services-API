@@ -31,7 +31,7 @@ namespace ServicesAPI.Presentation.Controllers
 
         [HttpGet("{Id}")]
         [ProducesResponseType(typeof(Specialization), 200)]
-        [ProducesResponseType(typeof(ErrorDetails), 400)]
+        [ProducesResponseType(typeof(ErrorDetails), 404)]
         [ProducesResponseType(typeof(ErrorDetails), 500)]
         public async Task<IActionResult> GetById([FromRoute] GetSpecializationById request, CancellationToken cancellationToken = default)
         {
@@ -40,33 +40,35 @@ namespace ServicesAPI.Presentation.Controllers
         }
 
         [HttpPut("{id}/status")]
-        [ProducesResponseType(202)]
+        [ProducesResponseType(204)]
         [ProducesResponseType(typeof(ErrorDetails), 400)]
+        [ProducesResponseType(typeof(ErrorDetails), 404)]
         [ProducesResponseType(typeof(ErrorDetails), 500)]
         public async Task<IActionResult> ChangeStatus([FromRoute] Guid id, bool isActive, CancellationToken cancellationToken = default)
         {
             await _mediator.Send(new ChangeSpecializationStatus(id, isActive), cancellationToken);
-            return Accepted();
+            return NoContent();
         }
 
         [HttpPut("{id}")]
-        [ProducesResponseType(202)]
+        [ProducesResponseType(204)]
         [ProducesResponseType(typeof(ErrorDetails), 400)]
+        [ProducesResponseType(typeof(ErrorDetails), 404)]
         [ProducesResponseType(typeof(ErrorDetails), 500)]
         public async Task<IActionResult> EditSpecialization([FromRoute] Guid id, string name, bool isActive, CancellationToken cancellationToken = default)
         {
             await _mediator.Send(new EditSpecialization(id, name, isActive), cancellationToken);
-            return Accepted();
+            return NoContent();
         }
 
         [HttpPost]
-        [ProducesResponseType(typeof(Specialization), 200)]
+        [ProducesResponseType(typeof(Specialization), 201)]
         [ProducesResponseType(typeof(ErrorDetails), 400)]
         [ProducesResponseType(typeof(ErrorDetails), 500)]
         public async Task<IActionResult> CreateSpecialization(CreateSpecialization request, CancellationToken cancellationToken = default)
         {
             var specialization = await _mediator.Send(request, cancellationToken);
-            return Ok(specialization);
+            return CreatedAtAction(nameof(GetSpecializationById), new { Id = specialization.Id }, specialization);
         }
     }
 }

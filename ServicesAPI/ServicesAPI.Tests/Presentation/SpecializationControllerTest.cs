@@ -14,7 +14,7 @@ namespace ServicesAPI.Tests.Presentation
         {
             var result = await controller.CreateSpecialization(model);
 
-            result.Should().BeOfType<OkObjectResult>();
+            result.Should().BeOfType<CreatedAtActionResult>();
         }
 
         [Theory, AutoMoqData]
@@ -30,7 +30,7 @@ namespace ServicesAPI.Tests.Presentation
         {
             var result = await controller.ChangeStatus(model.Id, model.IsActive);
 
-            result.Should().BeOfType<AcceptedResult>();
+            result.Should().BeOfType<NoContentResult>();
         }
 
         [Theory, AutoMoqData]
@@ -38,7 +38,7 @@ namespace ServicesAPI.Tests.Presentation
         {
             var result = await controller.EditSpecialization(model.Id, model.Name, model.IsActive);
 
-            result.Should().BeOfType<AcceptedResult>();
+            result.Should().BeOfType<NoContentResult>();
         }
     }
 }

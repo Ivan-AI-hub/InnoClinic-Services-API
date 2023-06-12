@@ -15,7 +15,7 @@ namespace ServicesAPI.Tests.Presentation
         {
             var result = await controller.CreateService(model);
 
-            result.Should().BeOfType<OkObjectResult>();
+            result.Should().BeOfType<CreatedAtActionResult>();
         }
 
         [Theory, AutoMoqData]
@@ -39,7 +39,7 @@ namespace ServicesAPI.Tests.Presentation
         {
             var result = await controller.ChangeStatus(model.Id, model.Status);
 
-            result.Should().BeOfType<AcceptedResult>();
+            result.Should().BeOfType<NoContentResult>();
         }
 
         [Theory, AutoMoqData]
@@ -47,7 +47,7 @@ namespace ServicesAPI.Tests.Presentation
         {
             var result = await controller.EditService(model.Id, model.Name, model.Price, model.Status, model.SpecializationId, model.CategoryName);
 
-            result.Should().BeOfType<AcceptedResult>();
+            result.Should().BeOfType<NoContentResult>();
         }
     }
 }
