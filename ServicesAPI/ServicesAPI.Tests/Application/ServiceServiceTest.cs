@@ -1,4 +1,5 @@
-﻿using MassTransit;
+﻿using AutoFixture;
+using MassTransit;
 using ServicesAPI.Application.Commands.Services.ChangeStatus;
 using ServicesAPI.Application.Commands.Services.Create;
 using ServicesAPI.Application.Commands.Services.Edit;
@@ -13,14 +14,29 @@ namespace ServicesAPI.Tests.Application
     {
         [Theory, AutoMoqData]
         public async Task CreateService_Successfuly(CreateService createService,
-               [Frozen] Mock<IServiceRepository> serviceRepository,
-               [Frozen] Mock<ICategoryRepository> categoryRepository,
+               Mock<ServicesContext> context,
                [Frozen] Mock<IPublishEndpoint> publishEndpoint,
                [ApplicationMapper][Frozen] IMapper mapper)
         {
-            var handler = new CreateServiceHandler(serviceRepository.Object, categoryRepository.Object, mapper, publishEndpoint.Object);
+            //arrange
+            var configuredContext = ConfigureServiceContext(context);
+            var serviceRepository = new ServiceRepository(configuredContext);
+            var categoryRepository = new CategoryRepository(configuredContext);
+            var specializationRepository = new SpecializationRepository(configuredContext);
 
-            await handler.Handle(createService, default);
+            var createHandler = new CreateServiceHandler(serviceRepository, categoryRepository, mapper, publishEndpoint.Object);
+            var getByIdHandler = new GetServiceByIdHandler(serviceRepository, categoryRepository, specializationRepository);
+
+            var serviceCategory = new Category(createService.CategoryName, 20);
+
+            //act
+            await categoryRepository.CreateAsync(serviceCategory);
+            var createServiceResult = await createHandler.Handle(createService, default);
+            var createdService = await getByIdHandler.Handle(new GetServiceById(createServiceResult.Id), default);
+
+            //assert
+            createdService.Should().NotBeNull();
+            createdService.Should().BeEquivalentTo(createServiceResult);
         }
 
         [Theory, AutoMoqData]
@@ -44,40 +60,76 @@ namespace ServicesAPI.Tests.Application
         }
 
         [Theory, AutoMoqData]
-        public async Task ChangeStatus_Successfuly(ChangeServiceStatus changeServiceStatus,
-            [Frozen] Mock<IServiceRepository> serviceRepository)
+        public async Task ChangeStatus_Successfuly(Service service,
+            Mock<ServicesContext> context,
+            [Frozen] Mock<ICategoryRepository> categoryRepository,
+            [Frozen] Mock<ISpecializationRepository> specializationRepository)
         {
             //arrange
-            serviceRepository.Setup(x => x.IsServiceExist(changeServiceStatus.Id)).Returns(true);
-            var handler = new ChangeServiceStatusHandler(serviceRepository.Object);
+            var configuredContext = ConfigureServiceContext(context);
+            var serviceRepository = new ServiceRepository(configuredContext);
+
+            var changeStatusHandler = new ChangeServiceStatusHandler(serviceRepository);
+            var getByIdHandler = new GetServiceByIdHandler(serviceRepository, categoryRepository.Object, specializationRepository.Object);
+
+            var changeStatusModel = new ChangeServiceStatus(service.Id, !service.Status);
+            var getServiceByIdModel = new GetServiceById(service.Id);
 
             //act
-            await handler.Handle(changeServiceStatus, default);
+            await serviceRepository.CreateAsync(service, default);
+            await changeStatusHandler.Handle(changeStatusModel, default);
+            var changedService = await getByIdHandler.Handle(getServiceByIdModel, default);
+
+            //assert 
+            changedService.Status.Should().NotBe(service.Status);
         }
 
         [Theory, AutoMoqData]
         public async Task ChangeStatus_Throw_ServiceNotFoundException(ChangeServiceStatus changeServiceStatus,
             [Frozen] Mock<IServiceRepository> serviceRepository)
         {
+            //arrange 
             serviceRepository.Setup(x => x.IsServiceExist(changeServiceStatus.Id)).Returns(false);
             var handler = new ChangeServiceStatusHandler(serviceRepository.Object);
 
+            //act
             var act = () => handler.Handle(changeServiceStatus, default);
 
+            //assert
             await Assert.ThrowsAsync<ServiceNotFoundException>(act);
         }
 
         [Theory, AutoMoqData]
-        public async Task Edit_Successfuly(EditService editService,
-                [Frozen] Mock<IServiceRepository> serviceRepository,
-                [Frozen] Mock<ICategoryRepository> categoryRepository,
+        public async Task Edit_Successfuly(Service service, 
+                Specialization specialization, 
+                Category category,
+                Mock<ServicesContext> context,
                 [Frozen] Mock<IPublishEndpoint> publishEndpoint,
                 [ApplicationMapper][Frozen] IMapper mapper)
         {
-            serviceRepository.Setup(x => x.IsServiceExist(editService.Id)).Returns(true);
-            var handler = new EditServiceHandler(serviceRepository.Object, categoryRepository.Object, publishEndpoint.Object, mapper);
+            //arrange
+            var configuredContext = ConfigureServiceContext(context);
+            var serviceRepository = new ServiceRepository(configuredContext);
+            var categoryRepository = new CategoryRepository(configuredContext);
+            var specializationRepository = new SpecializationRepository(configuredContext);
 
-            await handler.Handle(editService, default);
+            var editHandler = new EditServiceHandler(serviceRepository, categoryRepository, publishEndpoint.Object, mapper);
+            var getByIdHandler = new GetServiceByIdHandler(serviceRepository, categoryRepository, specializationRepository);
+
+            var fixture = new Fixture();
+            var editServiceModel = new EditService(service.Id, fixture.Create<string>(), fixture.Create<int>(),
+                                                    fixture.Create<bool>(), specialization.Id, category.Name);
+            var getServiceByIdModel = new GetServiceById(service.Id);
+
+            //act
+            await categoryRepository.CreateAsync(category);
+            await specializationRepository.CreateAsync(specialization);
+            await serviceRepository.CreateAsync(service);
+            await editHandler.Handle(editServiceModel, default);
+            var editedService = await getByIdHandler.Handle(getServiceByIdModel, default);
+
+            //assert
+            editedService.Should().NotBeEquivalentTo(service);
         }
 
         [Theory, AutoMoqData]
@@ -87,11 +139,14 @@ namespace ServicesAPI.Tests.Application
                 [Frozen] Mock<IPublishEndpoint> publishEndpoint,
                 [ApplicationMapper][Frozen] IMapper mapper)
         {
+            //arrange 
             serviceRepository.Setup(x => x.IsServiceExist(editService.Id)).Returns(false);
             var handler = new EditServiceHandler(serviceRepository.Object, categoryRepository.Object, publishEndpoint.Object, mapper);
 
+            //act
             var act = () => handler.Handle(editService, default);
 
+            //assert
             await Assert.ThrowsAsync<ServiceNotFoundException>(act);
         }
 
@@ -102,13 +157,16 @@ namespace ServicesAPI.Tests.Application
                 [Frozen] Mock<IPublishEndpoint> publishEndpoint,
                 [ApplicationMapper][Frozen] IMapper mapper)
         {
+            //arrange 
             serviceRepository.Setup(x => x.IsServiceExist(editService.Id)).Returns(true);
             categoryRepository.Setup(x => x.GetByNameAsync(editService.CategoryName, It.IsAny<CancellationToken>()))
                   .Returns(Task.FromResult<Category>(null));
             var handler = new EditServiceHandler(serviceRepository.Object, categoryRepository.Object, publishEndpoint.Object, mapper);
 
+            //act
             var act = () => handler.Handle(editService, default);
 
+            //assert
             await Assert.ThrowsAsync<CategoryNotFoundException>(act);
         }
 
@@ -118,10 +176,13 @@ namespace ServicesAPI.Tests.Application
                 [Frozen] Mock<ICategoryRepository> categoryRepository,
                 [Frozen] Mock<ISpecializationRepository> specializationRepository)
         {
+            //arrange 
             var handler = new GetServiceByIdHandler(serviceRepository.Object, categoryRepository.Object, specializationRepository.Object);
 
+            //act
             var service = await handler.Handle(getById, default);
 
+            //assert
             service.Should().NotBeNull();
             service.Specialization.Should().NotBeNull();
             service.Category.Should().NotBeNull();
@@ -133,11 +194,14 @@ namespace ServicesAPI.Tests.Application
         [Frozen] Mock<ICategoryRepository> categoryRepository,
         [Frozen] Mock<ISpecializationRepository> specializationRepository)
         {
+            //arrange 
             serviceRepository.Setup(x => x.GetByIdAsync(getById.Id, It.IsAny<CancellationToken>())).Returns(Task.FromResult<Service>(null));
             var handler = new GetServiceByIdHandler(serviceRepository.Object, categoryRepository.Object, specializationRepository.Object);
 
+            //act
             var act = () => handler.Handle(getById, default);
 
+            //assert
             await Assert.ThrowsAsync<ServiceNotFoundException>(act);
         }
 
@@ -145,11 +209,24 @@ namespace ServicesAPI.Tests.Application
         public async Task GetActiveServicesByCategory_Successfuly(GetActiveServicesByCategory getActiveServicesByCategory,
                 [Frozen] Mock<IServiceRepository> serviceRepository)
         {
+            //arrange 
             var handler = new GetActiveServicesByCategoryHandler(serviceRepository.Object);
 
+            //act
             var services = await handler.Handle(getActiveServicesByCategory, default);
 
+            //assert
             services.Should().NotBeNull();
+        }
+
+        private ServicesContext ConfigureServiceContext(Mock<ServicesContext> context)
+        {
+            var db = new InMemoryDatabase();
+            db.CreateTable<Service>("Services");
+            db.CreateTable<Category>("Categories");
+            db.CreateTable<Specialization>("Specializations");
+            context.Setup(x => x.CreateConnection()).Returns(() => db.OpenConnection());
+            return context.Object;
         }
     }
 }

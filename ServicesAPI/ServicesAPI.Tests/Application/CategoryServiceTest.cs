@@ -6,22 +6,31 @@ namespace ServicesAPI.Tests.Application
 {
     public class CategoryServiceTest
     {
-        private MapperConfiguration _mapperConfig;
-        public CategoryServiceTest()
-        {
-            _mapperConfig = new MapperConfiguration(cnf => cnf.AddProfile(new ApplicationMappingProfile()));
-        }
-
         [Theory, AutoMoqData]
-        public void CreateCategory_Successfuly(CreateCategory createCategory,
-                                               Mock<ICategoryRepository> categoryRepository,
+        public async Task CreateCategory_Successfuly(CreateCategory createCategory,
+                                               Mock<ServicesContext> context,
                                                [ApplicationMapper][Frozen] IMapper mapper)
         {
+            //arrange
+            var repository = GetCategoryRepository(context);
+            var createHandler = new CreateCategoryHandler(repository, mapper);
+
             //act
-            var handler = new CreateCategoryHandler(categoryRepository.Object, mapper);
+            await createHandler.Handle(createCategory, default);
+            var createdCategory = await repository.GetByNameAsync(createCategory.Name, default);
 
             //assert
-            handler.Handle(createCategory, default);
+            createdCategory.Should().NotBeNull();
+            createdCategory.Name.Should().Be(createCategory.Name);
+            createdCategory.TimeSlotSize.Should().Be(createCategory.TimeSlotSize);
+        }
+
+        private ICategoryRepository GetCategoryRepository(Mock<ServicesContext> context)
+        {
+            var db = new InMemoryDatabase();
+            db.CreateTable<Category>("Categories");
+            context.Setup(x => x.CreateConnection()).Returns(() => db.OpenConnection());
+            return new CategoryRepository(context.Object);
         }
     }
 }

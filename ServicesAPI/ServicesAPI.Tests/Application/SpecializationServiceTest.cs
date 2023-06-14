@@ -13,47 +13,74 @@ namespace ServicesAPI.Tests.Application
     {
         [Theory, AutoMoqData]
         public async Task CreateSpecialization_Successfuly(CreateSpecialization createSpecialization,
-               [Frozen] Mock<ISpecializationRepository> specializationRepository,
+               [Frozen] Mock<ServicesContext> context,
                [Frozen] Mock<IPublishEndpoint> publishEndpoint,
                [ApplicationMapper][Frozen] IMapper mapper)
         {
-            var handler = new CreateSpecializationHandler(specializationRepository.Object, mapper, publishEndpoint.Object);
+            //arrange 
+            var specializationRepository = GetSpecializationRepository(context);
+            var createHandler = new CreateSpecializationHandler(specializationRepository, mapper, publishEndpoint.Object);
 
-            await handler.Handle(createSpecialization, default);
+            //act
+            var createSpecializationResult = await createHandler.Handle(createSpecialization, default);
+            var createdSpecialization = await specializationRepository.GetByIdAsync(createSpecializationResult.Id);
+
+            //assert
+            createdSpecialization.Should().BeEquivalentTo(createSpecializationResult);
         }
 
         [Theory, AutoMoqData]
-        public async Task ChangeStatus_Successfuly(ChangeSpecializationStatus changeSpecializationStatus,
-            [Frozen] Mock<ISpecializationRepository> specializationRepository)
+        public async Task ChangeStatus_Successfuly(Specialization specialization,
+            [Frozen] Mock<ServicesContext> context)
         {
-            specializationRepository.Setup(x => x.IsSpecializationExist(changeSpecializationStatus.Id)).Returns(true);
-            var handler = new ChangeSpecializationStatusHandler(specializationRepository.Object);
+            //arrange 
+            var specializationRepository = GetSpecializationRepository(context);
+            var changeStatusHandler = new ChangeSpecializationStatusHandler(specializationRepository);
+            var changeStatusModel = new ChangeSpecializationStatus(specialization.Id, !specialization.IsActive);
 
-            await handler.Handle(changeSpecializationStatus, default);
+            //act
+            await specializationRepository.CreateAsync(specialization);
+            await changeStatusHandler.Handle(changeStatusModel, default);
+            var editedSpecialization = await specializationRepository.GetByIdAsync(specialization.Id);
+
+            //assert
+            editedSpecialization.IsActive.Should().NotBe(specialization.IsActive);
         }
 
         [Theory, AutoMoqData]
         public async Task ChangeStatus_Throw_SpecializationNotFoundException(ChangeSpecializationStatus changeSpecializationStatus,
             [Frozen] Mock<ISpecializationRepository> specializationRepository)
         {
+            //arrange
             specializationRepository.Setup(x => x.IsSpecializationExist(changeSpecializationStatus.Id)).Returns(false);
             var handler = new ChangeSpecializationStatusHandler(specializationRepository.Object);
-
+            
+            //act
             var act = () => handler.Handle(changeSpecializationStatus, default);
 
+            //assert
             await Assert.ThrowsAsync<SpecializationNotFoundException>(act);
         }
 
         [Theory, AutoMoqData]
-        public async Task Edit_Successfuly(EditSpecialization editSpecialization,
-                [Frozen] Mock<ISpecializationRepository> specializationRepository,
+        public async Task Edit_Successfuly(Specialization specialization,
+                [Frozen] Mock<ServicesContext> context,
                 [Frozen] Mock<IPublishEndpoint> publishEndpoint,
                 [ApplicationMapper][Frozen] IMapper mapper)
         {
-            specializationRepository.Setup(x => x.IsSpecializationExist(editSpecialization.Id)).Returns(true);
-            var handler = new EditSpecializationHandler(specializationRepository.Object, mapper, publishEndpoint.Object);
+            //arrange
+            var specializationRepository = GetSpecializationRepository(context);
+            var editHandler = new EditSpecializationHandler(specializationRepository, mapper, publishEndpoint.Object);
 
-            await handler.Handle(editSpecialization, default);
+            var editModel = new EditSpecialization(specialization.Id, Guid.NewGuid().ToString(), !specialization.IsActive);
+
+            //act
+            await specializationRepository.CreateAsync(specialization);
+            await editHandler.Handle(editModel, default);
+            var editedSpecialization = await specializationRepository.GetByIdAsync(specialization.Id);
+
+            //assert
+            editedSpecialization.Should().NotBeEquivalentTo(specialization);
         }
 
         [Theory, AutoMoqData]
@@ -62,11 +89,14 @@ namespace ServicesAPI.Tests.Application
                 [Frozen] Mock<IPublishEndpoint> publishEndpoint,
                 [ApplicationMapper][Frozen] IMapper mapper)
         {
+            //arrange
             specializationRepository.Setup(x => x.IsSpecializationExist(editSpecialization.Id)).Returns(false);
             var handler = new EditSpecializationHandler(specializationRepository.Object, mapper, publishEndpoint.Object);
 
+            //act
             var act = () => handler.Handle(editSpecialization, default);
 
+            //assert
             await Assert.ThrowsAsync<SpecializationNotFoundException>(act);
         }
 
@@ -75,10 +105,13 @@ namespace ServicesAPI.Tests.Application
                 [Frozen] Mock<ISpecializationRepository> specializationRepository,
                 [Frozen] Mock<IServiceRepository> serviceRepository)
         {
+            //arrange
             var handler = new GetSpecializationByIdHandler(specializationRepository.Object, serviceRepository.Object);
 
+            //act
             var specialization = await handler.Handle(getById, default);
 
+            //assert
             specialization.Should().NotBeNull();
             specialization.Services.Should().NotBeNull();
         }
@@ -88,11 +121,14 @@ namespace ServicesAPI.Tests.Application
         [Frozen] Mock<ISpecializationRepository> specializationRepository,
         [Frozen] Mock<IServiceRepository> serviceRepository)
         {
+            //arrange
             specializationRepository.Setup(x => x.GetByIdAsync(getById.Id, It.IsAny<CancellationToken>())).Returns(Task.FromResult<Specialization>(null));
             var handler = new GetSpecializationByIdHandler(specializationRepository.Object, serviceRepository.Object);
 
+            //act
             var act = () => handler.Handle(getById, default);
 
+            //assert
             await Assert.ThrowsAsync<SpecializationNotFoundException>(act);
         }
 
@@ -100,11 +136,22 @@ namespace ServicesAPI.Tests.Application
         public async Task GetSpecializationsInfo_Successfuly(GetSpecializationsInfo getSpecializationsInfo,
                 [Frozen] Mock<ISpecializationRepository> specializationRepository)
         {
+            //arrange
             var handler = new GetSpecializationsInfoHandler(specializationRepository.Object);
 
+            //act
             var specializations = await handler.Handle(getSpecializationsInfo, default);
 
+            //assert
             specializations.Should().NotBeNull();
+        }
+
+        private ISpecializationRepository GetSpecializationRepository(Mock<ServicesContext> context)
+        {
+            var db = new InMemoryDatabase();
+            db.CreateTable<Specialization>("Specializations");
+            context.Setup(x => x.CreateConnection()).Returns(() => db.OpenConnection());
+            return new SpecializationRepository(context.Object);
         }
     }
 }
