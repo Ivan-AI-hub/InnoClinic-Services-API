@@ -11,7 +11,7 @@ using ServicesAPI.Presentation.Models.ErrorModels;
 namespace ServicesAPI.Presentation.Controllers
 {
     [ApiController]
-    [Route("Specializations")]
+    [Route("specializations")]
     public class SpecializationController : ControllerBase
     {
         private readonly IMediator _mediator;
