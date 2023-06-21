@@ -7,6 +7,7 @@ using ServicesAPI.Application.Queries.Services.GetByCategory;
 using ServicesAPI.Application.Queries.Services.GetById;
 using ServicesAPI.Domain;
 using ServicesAPI.Presentation.Models.ErrorModels;
+using ServicesAPI.Presentation.Models.RequestModels;
 
 namespace ServicesAPI.Presentation.Controllers
 {
@@ -45,9 +46,9 @@ namespace ServicesAPI.Presentation.Controllers
         [ProducesResponseType(typeof(ErrorDetails), 400)]
         [ProducesResponseType(typeof(ErrorDetails), 404)]
         [ProducesResponseType(typeof(ErrorDetails), 500)]
-        public async Task<IActionResult> ChangeStatus([FromRoute] Guid id, bool status, CancellationToken cancellationToken = default)
+        public async Task<IActionResult> ChangeStatus([FromRoute] Guid id, [FromBody] ChangeServiceStatusRequestModel model, CancellationToken cancellationToken = default)
         {
-            await _mediator.Send(new ChangeServiceStatus(id, status), cancellationToken);
+            await _mediator.Send(new ChangeServiceStatus(id, model.Status), cancellationToken);
             return NoContent();
         }
 
@@ -57,14 +58,10 @@ namespace ServicesAPI.Presentation.Controllers
         [ProducesResponseType(typeof(ErrorDetails), 404)]
         [ProducesResponseType(typeof(ErrorDetails), 500)]
         public async Task<IActionResult> EditService([FromRoute] Guid id,
-                                                     string name,
-                                                     int price,
-                                                     bool status,
-                                                     Guid specializationId,
-                                                     string categoryName,
+                                                     [FromBody] EditServiceRequestModel model,
                                                      CancellationToken cancellationToken = default)
         {
-            await _mediator.Send(new EditService(id, name, price, status, specializationId, categoryName), cancellationToken);
+            await _mediator.Send(new EditService(id, model.Name, model.Price, model.Status, model.SpecializationId, model.CategoryName), cancellationToken);
             return NoContent();
         }
 

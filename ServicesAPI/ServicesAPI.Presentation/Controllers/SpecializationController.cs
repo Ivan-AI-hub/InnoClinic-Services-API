@@ -7,6 +7,7 @@ using ServicesAPI.Application.Queries.Specializations.GetById;
 using ServicesAPI.Application.Queries.Specializations.GetInfo;
 using ServicesAPI.Domain;
 using ServicesAPI.Presentation.Models.ErrorModels;
+using ServicesAPI.Presentation.Models.RequestModels;
 
 namespace ServicesAPI.Presentation.Controllers
 {
@@ -44,9 +45,9 @@ namespace ServicesAPI.Presentation.Controllers
         [ProducesResponseType(typeof(ErrorDetails), 400)]
         [ProducesResponseType(typeof(ErrorDetails), 404)]
         [ProducesResponseType(typeof(ErrorDetails), 500)]
-        public async Task<IActionResult> ChangeStatus([FromRoute] Guid id, bool isActive, CancellationToken cancellationToken = default)
+        public async Task<IActionResult> ChangeStatus([FromRoute] Guid id, [FromBody] ChangeSpecializationStatusRequestModel model, CancellationToken cancellationToken = default)
         {
-            await _mediator.Send(new ChangeSpecializationStatus(id, isActive), cancellationToken);
+            await _mediator.Send(new ChangeSpecializationStatus(id, model.IsActive), cancellationToken);
             return NoContent();
         }
 
@@ -55,9 +56,9 @@ namespace ServicesAPI.Presentation.Controllers
         [ProducesResponseType(typeof(ErrorDetails), 400)]
         [ProducesResponseType(typeof(ErrorDetails), 404)]
         [ProducesResponseType(typeof(ErrorDetails), 500)]
-        public async Task<IActionResult> EditSpecialization([FromRoute] Guid id, string name, bool isActive, CancellationToken cancellationToken = default)
+        public async Task<IActionResult> EditSpecialization([FromRoute] Guid id, [FromBody] EditSpecializationRequestModel model, CancellationToken cancellationToken = default)
         {
-            await _mediator.Send(new EditSpecialization(id, name, isActive), cancellationToken);
+            await _mediator.Send(new EditSpecialization(id, model.Name, model.IsActive), cancellationToken);
             return NoContent();
         }
 
