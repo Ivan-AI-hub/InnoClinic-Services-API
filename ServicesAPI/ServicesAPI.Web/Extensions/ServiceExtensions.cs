@@ -2,12 +2,15 @@
 using MassTransit;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.OpenApi.Models;
+using Serilog;
+using Serilog.Sinks.Elasticsearch;
 using ServicesAPI.Domain.Interfaces;
 using ServicesAPI.Persistence;
 using ServicesAPI.Persistence.Migrations;
 using ServicesAPI.Persistence.Repositories;
 using ServicesAPI.Persistence.Settings;
 using ServicesAPI.Web.Settings;
+using System.Reflection;
 
 namespace ServicesAPI.Web.Extensions
 {
@@ -32,7 +35,24 @@ namespace ServicesAPI.Web.Extensions
             services.AddScoped<ISpecializationRepository, SpecializationRepository>();
             services.AddScoped<ICategoryRepository, CategoryRepository>();
         }
-
+        public static void ConfigureLogger(this IServiceCollection services, IConfiguration configuration, IHostEnvironment environment, string elasticUriSection)
+        {
+            services.AddSerilog((context, loggerConfiguration) =>
+            {
+                loggerConfiguration.Enrich.FromLogContext()
+                    .Enrich.WithMachineName()
+                    .WriteTo.Console()
+                    .WriteTo.Elasticsearch(new ElasticsearchSinkOptions(new Uri(configuration[elasticUriSection]))
+                    {
+                        IndexFormat = $"{Assembly.GetExecutingAssembly().GetName().Name!.ToLower().Replace(".", "-")}-{environment.EnvironmentName?.ToLower().Replace(".", "-")}-{DateTime.UtcNow:yyyy-MM}",
+                        AutoRegisterTemplate = true,
+                        NumberOfShards = 2,
+                        NumberOfReplicas = 1
+                    })
+                    .Enrich.WithProperty("Environment", environment.EnvironmentName)
+                    .ReadFrom.Configuration(configuration);
+            });
+        }
         public static void ConfigureJWT(this IServiceCollection services, IConfiguration configuration)
         {
             services.AddAuthentication(opt =>
