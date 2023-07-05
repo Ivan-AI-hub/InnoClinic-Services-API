@@ -69,7 +69,7 @@ namespace ServicesAPI.Presentation.Controllers
         public async Task<IActionResult> CreateSpecialization(CreateSpecialization request, CancellationToken cancellationToken = default)
         {
             var specialization = await _mediator.Send(request, cancellationToken);
-            return CreatedAtAction(nameof(GetSpecializationById), new { Id = specialization.Id }, specialization);
+            return CreatedAtAction(nameof(GetById), new { Id = specialization.Id }, specialization);
         }
     }
 }
