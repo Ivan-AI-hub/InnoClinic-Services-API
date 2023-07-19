@@ -54,7 +54,7 @@ namespace ServicesAPI.Tests.Application
             //arrange
             specializationRepository.Setup(x => x.IsSpecializationExist(changeSpecializationStatus.Id)).Returns(false);
             var handler = new ChangeSpecializationStatusHandler(specializationRepository.Object);
-            
+
             //act
             var act = () => handler.Handle(changeSpecializationStatus, default);
 

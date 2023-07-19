@@ -4,6 +4,7 @@ using ServicesAPI.Application.Commands.Specializations.Create;
 using ServicesAPI.Application.Commands.Specializations.Edit;
 using ServicesAPI.Application.Queries.Specializations.GetInfo;
 using ServicesAPI.Presentation.Controllers;
+using ServicesAPI.Presentation.Models.RequestModels;
 
 namespace ServicesAPI.Tests.Presentation
 {
@@ -31,7 +32,7 @@ namespace ServicesAPI.Tests.Presentation
         public async Task ChangeStatus_Successfuly(SpecializationController controller, ChangeSpecializationStatus model)
         {
             //act
-            var result = await controller.ChangeStatus(model.Id, model.IsActive);
+            var result = await controller.ChangeStatus(model.Id, new ChangeSpecializationStatusRequestModel(model.IsActive));
             //assert
             result.Should().BeOfType<NoContentResult>();
         }
@@ -40,7 +41,7 @@ namespace ServicesAPI.Tests.Presentation
         public async Task EditSpecialization_Successfuly(SpecializationController controller, EditSpecialization model)
         {
             //act
-            var result = await controller.EditSpecialization(model.Id, model.Name, model.IsActive);
+            var result = await controller.EditSpecialization(model.Id, new EditSpecializationRequestModel(model.Name, model.IsActive));
             //assert
             result.Should().BeOfType<NoContentResult>();
         }

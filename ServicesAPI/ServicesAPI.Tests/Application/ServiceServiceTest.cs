@@ -100,8 +100,8 @@ namespace ServicesAPI.Tests.Application
         }
 
         [Theory, AutoMoqData]
-        public async Task Edit_Successfuly(Service service, 
-                Specialization specialization, 
+        public async Task Edit_Successfuly(Service service,
+                Specialization specialization,
                 Category category,
                 Mock<ServicesContext> context,
                 [Frozen] Mock<IPublishEndpoint> publishEndpoint,

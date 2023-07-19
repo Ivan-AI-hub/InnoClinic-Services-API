@@ -74,6 +74,19 @@ namespace ServicesAPI.Persistence.Repositories
             }
         }
 
+        public async Task<Specialization?> GetByNameAsync(string name, CancellationToken cancellationToken = default)
+        {
+            var query = "SELECT * FROM Specializations WHERE Name = @Name";
+            var parameters = new DynamicParameters();
+            parameters.Add("Name", name);
+
+            using (var connection = _context.CreateConnection())
+            {
+                var comand = new CommandDefinition(query, parameters, cancellationToken: cancellationToken);
+                return await connection.QueryFirstOrDefaultAsync<Specialization>(comand);
+            }
+        }
+
         public async Task<IEnumerable<Specialization>> GetSpecializationsWithoutServicesAsync(int pageSize, int pageNumber, CancellationToken cancellationToken = default)
         {
             var query = "SELECT * FROM Specializations " +

@@ -1,7 +1,6 @@
 ﻿using MediatR;
 using Microsoft.AspNetCore.Mvc;
 using ServicesAPI.Application.Commands.Categories.Create;
-using ServicesAPI.Domain;
 using ServicesAPI.Presentation.Models.ErrorModels;
 
 namespace ServicesAPI.Presentation.Controllers

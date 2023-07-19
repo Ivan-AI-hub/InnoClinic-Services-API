@@ -5,6 +5,7 @@ using ServicesAPI.Application.Commands.Services.Create;
 using ServicesAPI.Application.Commands.Services.Edit;
 using ServicesAPI.Application.Queries.Services.GetByCategory;
 using ServicesAPI.Application.Queries.Services.GetById;
+using ServicesAPI.Application.Queries.Services.GetBySpecialization;
 using ServicesAPI.Domain;
 using ServicesAPI.Presentation.Models.ErrorModels;
 using ServicesAPI.Presentation.Models.RequestModels;
@@ -26,6 +27,16 @@ namespace ServicesAPI.Presentation.Controllers
         [ProducesResponseType(typeof(ErrorDetails), 404)]
         [ProducesResponseType(typeof(ErrorDetails), 500)]
         public async Task<IActionResult> GetByCategory([FromRoute] GetActiveServicesByCategory request, CancellationToken cancellationToken = default)
+        {
+            var services = await _mediator.Send(request, cancellationToken);
+            return Ok(services);
+        }
+
+        [HttpGet("specialization/{SpecializationName}")]
+        [ProducesResponseType(typeof(IEnumerable<Service>), 200)]
+        [ProducesResponseType(typeof(ErrorDetails), 404)]
+        [ProducesResponseType(typeof(ErrorDetails), 500)]
+        public async Task<IActionResult> GetBySpecialization([FromRoute] GetServicesBySpecialization request, CancellationToken cancellationToken = default)
         {
             var services = await _mediator.Send(request, cancellationToken);
             return Ok(services);
@@ -72,7 +83,7 @@ namespace ServicesAPI.Presentation.Controllers
         public async Task<IActionResult> CreateService(CreateService request, CancellationToken cancellationToken = default)
         {
             var service = await _mediator.Send(request, cancellationToken);
-            return CreatedAtAction(nameof(GetServiceById), new { Id = service.Id}, service);
+            return CreatedAtAction(nameof(GetServiceById), new { Id = service.Id }, service);
         }
     }
 }

@@ -7,6 +7,8 @@
 
         /// <returns>the specialization with a specific ID if it was found or null</returns>
         public Task<Specialization?> GetByIdAsync(Guid id, CancellationToken cancellationToken = default);
+        /// <returns>the specialization with a specific ID if it was found or null</returns>
+        public Task<Specialization?> GetByNameAsync(string name, CancellationToken cancellationToken = default);
 
         /// <returns>True if the specialization with ID = <paramref name="id"/> exist in the database or False</returns>
         public bool IsSpecializationExist(Guid id);

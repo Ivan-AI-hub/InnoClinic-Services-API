@@ -5,6 +5,7 @@ using ServicesAPI.Application.Commands.Services.Edit;
 using ServicesAPI.Application.Queries.Services.GetByCategory;
 using ServicesAPI.Application.Queries.Services.GetById;
 using ServicesAPI.Presentation.Controllers;
+using ServicesAPI.Presentation.Models.RequestModels;
 
 namespace ServicesAPI.Tests.Presentation
 {
@@ -41,7 +42,7 @@ namespace ServicesAPI.Tests.Presentation
         public async Task ChangeStatus_Successfuly(ServiceController controller, ChangeServiceStatus model)
         {
             //act
-            var result = await controller.ChangeStatus(model.Id, model.Status);
+            var result = await controller.ChangeStatus(model.Id, new ChangeServiceStatusRequestModel(model.Status));
             //assert
             result.Should().BeOfType<NoContentResult>();
         }
@@ -50,7 +51,7 @@ namespace ServicesAPI.Tests.Presentation
         public async Task EditService_Successfuly(ServiceController controller, EditService model)
         {
             //act
-            var result = await controller.EditService(model.Id, model.Name, model.Price, model.Status, model.SpecializationId, model.CategoryName);
+            var result = await controller.EditService(model.Id, new EditServiceRequestModel(model.Name, model.Price, model.Status, model.SpecializationId, model.CategoryName));
             //assert
             result.Should().BeOfType<NoContentResult>();
         }
